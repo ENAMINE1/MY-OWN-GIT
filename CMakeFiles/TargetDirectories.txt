@@ -1,0 +1,3 @@
+/home/shashwat/Desktop/GITCLONE/CMakeFiles/git_c.dir
+/home/shashwat/Desktop/GITCLONE/CMakeFiles/edit_cache.dir
+/home/shashwat/Desktop/GITCLONE/CMakeFiles/rebuild_cache.dir
