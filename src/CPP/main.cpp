@@ -1,11 +1,13 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include "git_init.h"
 #include "hash_object.h"
 #include "ls_tree.h"
 #include "cat_file.h"
 #include "write_tree.h"
 #include "git_add.h"
+#include "commit_tree.h"
 
 // argv[0] = "./git_c" arg[1] = command arg[2] = flags (optional) arg[3] = file
 
@@ -52,9 +54,9 @@ int main(int argc, char *argv[])
     else if (command == "write-tree")
     {
         // usage git_clone wirte-tree directory path
-        if(argc < 3)
+        if (argc < 3)
             std::cout << "Usage: write-tree <file_path>" << std::endl;
-        else if(argc > 3)
+        else if (argc > 3)
             std::cout << "Too many parmeters to write-tree.\n Usage: write-tree <file_path>" << std::endl;
         std::string tree_hash = write_tree(".");
         if (tree_hash.empty())
@@ -63,15 +65,63 @@ int main(int argc, char *argv[])
         }
         std::cout << tree_hash << "\n";
     }
-
-    else if(command == "add")
+    else if (command == "add")
     {
-        if(argc < 2)
+        if (argc < 2)
         {
             std::cerr << "No file provided\n";
             return EXIT_FAILURE;
         }
         git_add(argv[2]);
+    }
+    else if (command == "commit-tree")
+    {
+        if (argc < 5)
+        {
+            std::cerr << "Fatal Error: Usage commit-tree <tree-hash> -m <commit-message>\n";
+            return EXIT_FAILURE;
+        }
+        if (argc > 5)
+        {
+            // if no file with the name COMMIT_EDITMSG is present then wrong command because no earlier comimits
+            std::ifstream file(".git/COMMIT_EDITMSG");
+            if (!file)
+                std::cerr << "Fatal Errro: No previous commits found\n";
+            else
+            {
+                if (argc > 7)
+                {
+                    std::cerr << "Fatal Error: Usage commit-tree <tree-hash> -p <parent-hash> -m <commit-message>\n";
+                    return EXIT_FAILURE;
+                }
+                else
+                {
+                    std::ofstream file(".git/COMMIT_EDITMSG");
+                    if (!file)
+                    {
+                        std::cerr << "Fatal Error: Failed to create .git/COMMIT_EDITMSG file\n";
+                        return EXIT_FAILURE;
+                    }
+                    file << argv[6];
+                    file.close();
+                    std::string commit_hash = commit_tree(argv[2], argv[6], argv[4]);
+                    std::cout << commit_hash << '\n';
+                    return EXIT_SUCCESS;
+                }
+            }
+        }
+        // create ./git/COMMIT_EDITMSG file and write the commit message to it
+        std::ofstream file(".git/COMMIT_EDITMSG");
+        if (!file)
+        {
+            std::cerr << "Fatal Error: Failed to create .git/COMMIT_EDITMSG file\n";
+            return EXIT_FAILURE;
+        }
+        file << argv[4];
+        file.close();
+        std::string commit_hash = commit_tree(argv[2], argv[4]);
+        std::cout << commit_hash << '\n';
+        return EXIT_SUCCESS;
     }
     else
     {

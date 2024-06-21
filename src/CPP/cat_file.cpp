@@ -6,18 +6,19 @@
 #include "cat_file.h"
 #include "utils.h"
 #include "ls_tree.h"
+#include "commit_tree.h"
 
 int git_cat_file(int argc, char *argv[])
 {
     if (argc <= 3)
     {
-        std::cerr << "Invalid arguments, usage: cat-file -p/-t/-s <blob_sha>\n";
+        std::cerr << "Invalid arguments, usage: cat-file -p/-t/-s <object_sha>\n";
         return EXIT_FAILURE;
     }
     std::string flag = argv[2];
     if (flag != "-p" && flag != "-t" && flag != "-s")
     {
-        std::cerr << "Invalid flag, usage: cat-file -p/-t/-s <blob_sha>\n";
+        std::cerr << "Invalid flag, usage: cat-file -p/-t/-s <object_sha>\n";
         return EXIT_FAILURE;
     }
     // now i am sure with the arg count and the flag
@@ -61,6 +62,13 @@ int git_cat_file(int argc, char *argv[])
 
     if (flag == "-p")
     {
+        if(buf.find("commit") == 0)
+        {
+            // std::cout << "Commit object\n";
+            // call commit-tree
+            show_commit((dir_name + blob_sha).c_str());
+            return EXIT_SUCCESS;
+        }
         if (buf.find("tree") == 0)
         {
             // std::cout << "Tree object\n";

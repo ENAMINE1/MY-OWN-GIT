@@ -32,6 +32,7 @@ COPY ./CMakeLists.txt /app/CMakeLists.txt
 COPY ./Welcome.txt /root/.bashrc
 
 RUN mkdir -p /etc/bash_completion.d
+RUN touch ~/.gitconfig
 # Copy the completion script
 COPY ./git_clone_completion.sh /etc/bash_completion.d/git_clone_completion.sh
 

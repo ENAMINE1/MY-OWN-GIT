@@ -17,6 +17,7 @@ set(SOURCES
     src/CPP/write_tree.cpp
     src/CPP/utils.cpp
     src/CPP/git_add.cpp
+    src/CPP/commit_tree.cpp
 )
 
 # Add header files
@@ -28,6 +29,7 @@ set(HEADERS
     src/Headers/write_tree.h
     src/Headers/utils.h
     src/Headers/git_add.h
+    src/Headers/commit_tree.h
 )
 
 # Include directories

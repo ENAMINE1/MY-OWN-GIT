@@ -21,10 +21,15 @@ std::string hash_object(const std::string &filepath)
     data << t.rdbuf();
     if (data.str().empty())
     {
-        // std::cerr << "File is empty: " << filepath << std::endl;
+        std::cerr << "fatal: Unable to hash, File is empty: " << filepath << std::endl;
         return "";
     }
-
+    // if the filepath points to a directory
+    if (std::filesystem::is_directory(filepath))
+    {
+        std::cerr << "fatal: Not a valid file: " << filepath << std::endl;
+        return "";
+    }
     // Create blob content string
     std::string content = "blob " + std::to_string(data.str().length()) + '\0' + data.str();
 
@@ -43,7 +48,8 @@ std::string hash_object(const std::string &filepath)
 
     // Write compressed data to .git/objects
     std::string dir = ".git/objects/" + buffer.substr(0, 2);
-    std::filesystem::create_directory(dir);
+    if (!std::filesystem::exists(dir))
+        std::filesystem::create_directory(dir);
     std::string objectPath = dir + "/" + buffer.substr(2);
     std::ofstream objectFile(objectPath, std::ios::binary);
     if (!objectFile.is_open())
