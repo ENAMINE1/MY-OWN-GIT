@@ -7,6 +7,7 @@
 #include <vector>
 #include <set>
 #include <fstream>
+#include <filesystem>
 #include "utils.h"
 
 std::string sha1_hex(const std::string &filepath)
@@ -37,6 +38,19 @@ std::string sha1_hex(const std::string &filepath)
     return ss.str();
 }
 
+std::string compute_sha1(const std::string &data, bool print_out = false)
+{
+    unsigned char hash[20]; // 160 bits long for SHA1
+    SHA1(reinterpret_cast<const unsigned char *>(data.c_str()), data.size(), hash);
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0');
+    for (const auto &byte : hash)
+    {
+        ss << std::setw(2) << static_cast<int>(byte);
+    }
+    return ss.str();
+}
+
 std::string sha_file(std::string data)
 {
     unsigned char hash[20];
@@ -50,12 +64,17 @@ std::string sha_file(std::string data)
     std::cout << ss.str() << std::endl;
     return ss.str();
 }
-
+// this function is used to convert the hexadecimal hash to a binary hash which means that the hash is converted to a string of bytes
 std::string hash_digest(const std::string &input)
 {
-    unsigned char hash[20];
-    SHA1((unsigned char *)input.c_str(), input.size(), hash);
-    return std::string((char *)hash, 20);
+    std::string condensed;
+    for (size_t i = 0; i < input.length(); i += 2)
+    {
+        std::string byte_string = input.substr(i, 2);
+        char byte = static_cast<char>(std::stoi(byte_string, nullptr, 16));
+        condensed.push_back(byte);
+    }
+    return condensed;
 }
 
 void compressFile(const std::string &data, uLong *bound, unsigned char *dest)
@@ -155,11 +174,118 @@ std::set<std::string> parse_tree_object(FILE *tree_object)
         fread(hash, 1, 20, tree_object);
         // shift the mode string to the right and prepend 0 till the number contains 6 digits
 
-
         std::string file_details = std::string(mode) + " " + std::string(reinterpret_cast<char *>(hash), 20) + " " + std::string(filename);
         unsorted_directories.push_back(file_details);
     }
     std::sort(unsorted_directories.begin(), unsorted_directories.end());                                // sort the directories lexicographically
     std::set<std::string> sorted_directories(unsorted_directories.begin(), unsorted_directories.end()); // remove duplicates
     return sorted_directories;
+}
+
+bool decompress_object(std::string &buf, std::string data)
+{
+    buf.resize(data.size());
+    while (true)
+    {
+        auto buf_size = buf.size();
+        auto res = uncompress(reinterpret_cast<Bytef *>(buf.data()), &buf_size, reinterpret_cast<const Bytef *>(data.data()), data.size());
+        if (res == Z_BUF_ERROR)
+        {
+            buf.resize(buf.size() * 2);
+        }
+        else if (res != Z_OK)
+        {
+            std::cerr << "Failed to decompress file, code:" << res << "\n";
+            return false;
+        }
+        else
+        {
+            buf.resize(buf_size);
+            break;
+        }
+    }
+    return true;
+}
+
+bool compress_object(std::string &buf, std::string data)
+{
+    buf.resize(data.size() + data.size() / 100 + 12);
+    while (true)
+    {
+        auto buf_size = buf.size();
+        auto res = compress(reinterpret_cast<Bytef *>(buf.data()), &buf_size, reinterpret_cast<const unsigned char *>(data.c_str()), data.size());
+        if (res == Z_BUF_ERROR)
+        {
+            buf.resize(buf.size() * 2);
+        }
+        else if (res != Z_OK)
+        {
+            std::cerr << "Failed to compress file, code:" << res << "\n";
+            return false;
+        }
+        else
+        {
+            buf.resize(buf_size);
+            break;
+        }
+    }
+    return true;
+}
+
+void compress_and_store(const std::string &hash, const std::string &content, std::string dir = ".")
+{
+    // Open input stream to read from memory (fmemopen is POSIX, not standard C++)
+    FILE *input = fmemopen((void *)content.c_str(), content.length(), "rb");
+    if (!input)
+    {
+        std::cerr << "Failed to open memory stream for reading.\n";
+        return;
+    }
+
+    std::string hash_folder = hash.substr(0, 2);
+    std::string object_path = dir + "/.git/objects/" + hash_folder + '/';
+    if (!std::filesystem::exists(object_path))
+    {
+        std::filesystem::create_directories(object_path);
+    }
+
+    std::string object_file_path = object_path + hash.substr(2);
+    if (!std::filesystem::exists(object_file_path))
+    {
+        FILE *output = fopen(object_file_path.c_str(), "wb");
+        if (!output)
+        {
+            std::cerr << "Failed to open output file for writing.\n";
+            fclose(input); // close input file stream before returning
+            return;
+        }
+
+        // Determine size of content to be compressed
+        fseek(input, 0, SEEK_END);
+        size_t input_size = ftell(input);
+        fseek(input, 0, SEEK_SET);
+
+        // Allocate buffer for input data
+        Bytef *input_buffer = new Bytef[input_size];
+        fread(input_buffer, 1, input_size, input);
+
+        // Call compression function
+        if (compress(input_buffer, &input_size, (const Bytef *)content.c_str(), content.length()) != Z_OK)
+        {
+            std::cerr << "Failed to compress data.\n";
+            fclose(output);
+            delete[] input_buffer;
+            fclose(input); // close input file stream before returning
+            return;
+        }
+
+        // Write compressed data to output file
+        fwrite(input_buffer, 1, input_size, output);
+
+        // Clean up
+        delete[] input_buffer;
+        fclose(output);
+    }
+
+    fclose(input);
 }

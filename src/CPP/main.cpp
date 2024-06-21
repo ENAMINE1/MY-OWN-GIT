@@ -50,8 +50,19 @@ int main(int argc, char *argv[])
     }
     else if (command == "write-tree")
     {
-        write_tree();
+        // usage git_clone wirte-tree directory path
+        if(argc < 3)
+            std::cout << "Usage: write-tree <file_path>" << std::endl;
+        else if(argc > 3)
+            std::cout << "Too many parmeters to write-tree.\n Usage: write-tree <file_path>" << std::endl;
+        std::string tree_hash = write_tree(".");
+        if (tree_hash.empty())
+        {
+            return EXIT_FAILURE;
+        }
+        std::cout << tree_hash << "\n";
     }
+
     else if(command == "add")
     {
         if(argc < 2)
