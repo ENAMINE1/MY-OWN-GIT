@@ -52,7 +52,7 @@ Ensure you have the following before starting:
 
 1. Clone the repository to your local machine.
    ```bash
-   git clone git@github.com:ENAMINE1/MY-OWN-GIT.git
+   git clone https://github.com/ENAMINE1/MY-OWN-GIT.git
    cd MY-OWN-GIT
    ```
 2. Build the Docker image.
