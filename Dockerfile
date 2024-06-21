@@ -41,11 +41,12 @@ RUN cmake .
 RUN make
 
 # Copy the built executable to a directory in the PATH
-RUN cp /app/git_c /usr/local/bin/git_clone
+RUN cp /app/git_c /usr/local/bin/git_2.0
 
 
 # Set executable permissions
-RUN chmod +x /usr/local/bin/git_clone
+RUN chmod +x /usr/local/bin/git_2.0
+
 RUN echo "source /etc/bash_completion.d/git_clone_completion.sh" >> /root/.bashrc
 
 # Define the command that should be run when a container is started from this image

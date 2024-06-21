@@ -1,6 +1,6 @@
-# git_clone_completion.sh
+# git_2.0_completion.sh
 
-_git_clone_completions()
+_git_2.0_completions()
 {
     local cur prev opts
     COMPREPLY=()
@@ -15,4 +15,5 @@ _git_clone_completions()
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
     return 0
 }
-complete -F _git_clone_completions git_clone
+
+complete -F _git_2.0_completions git_2.0
