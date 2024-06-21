@@ -2,5 +2,5 @@ build/
 CMakeFiles/
 src/Temp/
 .vscode/
-Cmake_install.cmake
+cmake_install.cmake
 CMakeCache.txt
