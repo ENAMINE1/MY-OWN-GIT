@@ -7,21 +7,22 @@
 #include "hash_object.h"
 #include "utils.h"
 
-void hash_object(const std::string &filepath)
+// this is the sha1 hash of the file
+std::string hash_object(const std::string &filepath)
 {
     // Read file contents
     std::ifstream t(filepath, std::ios::binary);
     if (!t.is_open())
     {
         std::cerr << "Could not open file " << filepath << std::endl;
-        return;
+        return "";
     }
     std::stringstream data;
     data << t.rdbuf();
     if (data.str().empty())
     {
         std::cerr << "File is empty: " << filepath << std::endl;
-        return;
+        return "";
     }
 
     // Create blob content string
@@ -32,7 +33,7 @@ void hash_object(const std::string &filepath)
     if (buffer.length() != 40)
     {
         std::cerr << "Invalid SHA1 hash length: " << buffer.length() << std::endl;
-        return;
+        return "";
     }
 
     // Compress blob content
@@ -48,8 +49,9 @@ void hash_object(const std::string &filepath)
     if (!objectFile.is_open())
     {
         std::cerr << "Could not create file " << objectPath << std::endl;
-        return;
+        return "";
     }
     objectFile.write((char *)compressedData, bound);
     objectFile.close();
+    return buffer;
 }

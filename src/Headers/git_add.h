@@ -1,10 +1,15 @@
 #ifndef GIT_ADD_H
 #define GIT_ADD_H
 
+// https://git-scm.com/docs/index-format
+
 #include <string>
 
 void git_add(const std::string &file);
 
+/*
+Index entries are sorted in ascending order on the name field,interpreted as a string of unsigned bytes(i.e.memcmp() order, no localization, no special casing of directory separator '/').Entries with the same name are sorted by their stage field.
+*/
 struct IndexEntry
 {
     char mode[6];

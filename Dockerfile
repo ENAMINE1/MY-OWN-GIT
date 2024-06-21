@@ -18,6 +18,7 @@ RUN apt-get update \
     libssl-dev
 
 RUN dpkg -s zlib1g libssl-dev
+RUN apt-get install tree
 
 # Create necessary directories
 RUN mkdir -p /app/src/CPP /app/src/Headers

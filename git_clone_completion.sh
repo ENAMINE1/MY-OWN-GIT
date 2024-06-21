@@ -6,7 +6,7 @@ _git_clone_completions()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="init add commit clone cat-file hash-object "
+    opts="init add commit clone cat-file hash-object write-tree ls-tree"
 
     if [[ ${cur} == -* ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )

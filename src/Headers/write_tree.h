@@ -5,8 +5,7 @@
 #include <string>
 #include <vector>
 
-void write_tree();
-std::vector<TreeEntry> read_index();
-std::string hash_object(const std::string &data, const std::string &type);
+std::string write_tree(const std::string &directory);
+// std::vector<Entry> read_index();
 
 #endif // WRITE_TREE_H
