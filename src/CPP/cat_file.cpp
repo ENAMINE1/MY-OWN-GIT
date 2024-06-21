@@ -5,6 +5,7 @@
 #include <filesystem> // Add this line
 #include "cat_file.h"
 #include "utils.h"
+#include "ls_tree.h"
 
 int git_cat_file(int argc, char *argv[])
 {
@@ -56,10 +57,24 @@ int git_cat_file(int argc, char *argv[])
             break;
         }
     }
+    // if the object type is tree then call ls-tree
+
     if (flag == "-p")
+    {
+        if (buf.find("tree") == 0)
+        {
+            // std::cout << "Tree object\n";
+            // call ls-tree
+            ls_tree((dir_name + blob_sha).c_str());
+            return EXIT_SUCCESS;
+        }
         std::cout << std::string_view(buf).substr(buf.find('\0') + 1) << std::endl;
+    }
     else if (flag == "-t")
-        std::cout << "blob\n";
+    {
+        const auto space = buf.find(' ');
+        std::cout << std::string_view(buf).substr(0, space) << std::endl;
+    }
     else if (flag == "-s")
         std::cout << buf.size() << '\n';
     return EXIT_SUCCESS;

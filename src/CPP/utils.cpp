@@ -61,7 +61,7 @@ std::string sha_file(std::string data)
     {
         ss << std::setw(2) << static_cast<int>(byte);
     }
-    std::cout << ss.str() << std::endl;
+    // std::cout << ss.str() << std::endl;
     return ss.str();
 }
 // this function is used to convert the hexadecimal hash to a binary hash which means that the hash is converted to a string of bytes
@@ -324,7 +324,13 @@ void compress_and_store(const std::string &hash, const std::string &content, std
         // Call compression function
         if (compress(input_buffer, &input_size, (const Bytef *)content.c_str(), content.length()) != Z_OK)
         {
-            std::cerr << "Failed to compress data.\n";
+            // std::cerr << "Failed to compress data.\t";
+            // print the data
+            // for (size_t i = 0; i < content.length(); i++)
+            // {cout
+            //     std::cerr << content[i];
+            // }
+            // std::cerr << std::endl;
             fclose(output);
             delete[] input_buffer;
             fclose(input); // close input file stream before returning

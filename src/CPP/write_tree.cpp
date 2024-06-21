@@ -15,7 +15,7 @@
 // A tree object will contain the state of working directory in the form of other tree and blob objects
 std::string write_tree(const std::string &directory)
 {
-    std::cout << "Writing tree for directory: " << directory << std::endl;
+    // std::cout << "Writing tree for directory: " << directory << std::endl;
     std::vector<std::string> tree_entries;
     std::vector<std::string> skip;
     // = {
@@ -31,7 +31,7 @@ std::string write_tree(const std::string &directory)
             skip.push_back(line);
         }
     }
-    
+
     for (const auto &entry : std::filesystem::directory_iterator(directory))
     {
         std::string path = entry.path().string();
@@ -41,9 +41,27 @@ std::string write_tree(const std::string &directory)
         {
             continue;
         }
+        std::string entry_type;
         std::error_code ec;
-        // look carefully there is a space after each number in the entry_type
-        std::string entry_type = std::filesystem::is_directory(path, ec) ? "040000 " : "100644 ";
+        if (std::filesystem::is_directory(entry.status()))
+        {
+            entry_type = "040000 "; // Directory
+        }
+        else
+        {
+            // Determine file permissions
+            auto perms = std::filesystem::status(entry).permissions();
+            if ((perms & std::filesystem::perms::owner_exec) != std::filesystem::perms::none ||
+                (perms & std::filesystem::perms::group_exec) != std::filesystem::perms::none ||
+                (perms & std::filesystem::perms::others_exec) != std::filesystem::perms::none)
+            {
+                entry_type = "100755 "; // Executable
+            }
+            else
+            {
+                entry_type = "100644 "; // Regular file
+            }
+        }
         std::string relative_path = path.substr(path.find(directory) + directory.length() + 1);
         std::string hash = std::filesystem::is_directory(path, ec) ? write_tree(path.c_str()) : hash_object(path.c_str());
         std::string object_type;
@@ -77,10 +95,10 @@ std::string write_tree(const std::string &directory)
     {
         tree_content += entry;
     }
-    std::cerr << tree_content << std::endl;
+    // std::cerr << tree_content << std::endl;
     // storing the tree object
     std::string tree_hash = compute_sha1(tree_content, false);
     compress_and_store(tree_hash.c_str(), tree_content, ".");
-    std::cout << "Tree hash for :" << directory << tree_hash << std::endl;
+    // std::cout << "Tree hash for :" << directory << tree_hash << std::endl;
     return tree_hash;
 }

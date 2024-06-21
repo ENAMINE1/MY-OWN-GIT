@@ -48,7 +48,7 @@ int ls_tree(const char *object_hash)
     // print the directories
     if (!directories.empty())
     {
-        std::cout << "Directories: " << std::endl;
+        // std::cout << "Directories: " << std::endl;
         for (const Entry &directory : directories)
         {
             std::string object_type;

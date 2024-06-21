@@ -21,7 +21,7 @@ std::string hash_object(const std::string &filepath)
     data << t.rdbuf();
     if (data.str().empty())
     {
-        std::cerr << "File is empty: " << filepath << std::endl;
+        // std::cerr << "File is empty: " << filepath << std::endl;
         return "";
     }
 
