@@ -30,6 +30,10 @@ COPY ./CMakeLists.txt /app/CMakeLists.txt
 # Copy the bashrc_welcome.txt file and rename it to .bashrc
 COPY ./Welcome.txt /root/.bashrc
 
+RUN mkdir -p /etc/bash_completion.d
+# Copy the completion script
+COPY ./git_clone_completion.sh /etc/bash_completion.d/git_clone_completion.sh
+
 # Build the project
 RUN cd /app
 RUN cmake .
@@ -41,6 +45,7 @@ RUN cp /app/git_c /usr/local/bin/git_clone
 
 # Set executable permissions
 RUN chmod +x /usr/local/bin/git_clone
+RUN echo "source /etc/bash_completion.d/git_clone_completion.sh" >> /root/.bashrc
 
 # Define the command that should be run when a container is started from this image
 CMD ["bash"]

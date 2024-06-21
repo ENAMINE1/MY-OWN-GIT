@@ -10,13 +10,14 @@ int git_cat_file(int argc, char *argv[])
 {
     if (argc <= 3)
     {
-        std::cerr << "Invalid arguments, required `-p <blob_sha>`\n";
+        std::cerr << "Invalid arguments, usage: cat-file -p/-t/-s <blob_sha>\n";
+        return EXIT_FAILURE;
     }
     std::string flag = argv[2];
-    // only implemented -p flag
-    if (flag != "-p")
+    if(flag != "-p" && flag != "-t" && flag != "-s")
     {
-        std::cerr << "Invalid flag for cat-file, expected -p\n";
+        std::cerr << "Invalid flag, usage: cat-file -p/-t/-s <blob_sha>\n";
+        return EXIT_FAILURE;
     }
     // now i am sure with the arg count and the flag
     // the third argument contains the actual file name
@@ -26,16 +27,14 @@ int git_cat_file(int argc, char *argv[])
     // the rest of the sha1 hash value is the actual file name inside the folder
     const std::string blob_sha = value.substr(2);
     const auto blob_path = std::filesystem::path(".git") / "objects" / dir_name / blob_sha;
-
     std::ifstream input = std::ifstream(blob_path);
     if (!input.is_open())
     {
         std::cerr << "Failed to open " << blob_path << " file.\n";
         return EXIT_FAILURE;
     }
-
     const std::string blob_data = std::string(std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>());
-    std::cout << blob_data;
+    // std::cout << blob_data;
     // i have the compressed data of the file which needs to be decompressed using zlib
     auto buf = std::string();
     buf.resize(blob_data.size());
@@ -57,6 +56,11 @@ int git_cat_file(int argc, char *argv[])
             break;
         }
     }
-    std::cout << std::string_view(buf).substr(buf.find('\0') + 1);
-    return 0;
+    if(flag == "-p")
+        std::cout << std::string_view(buf).substr(buf.find('\0') + 1);
+    else if(flag == "-t")
+        std::cout << "blob\n";
+    else if(flag == "-s")
+        std::cout << buf.size() << '\n';
+    return EXIT_SUCCESS;
 }

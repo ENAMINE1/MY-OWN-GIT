@@ -12,6 +12,7 @@
 std::string sha1_hex(const std::string &filepath)
 {
     // Read the file content
+    std::cerr << "Reading file " << filepath << std::endl;
     std::ifstream file(filepath, std::ios::binary);
     if (!file)
     {
@@ -33,6 +34,20 @@ std::string sha1_hex(const std::string &filepath)
     {
         ss << std::setw(2) << static_cast<int>(hash[i]);
     }
+    return ss.str();
+}
+
+std::string sha_file(std::string data)
+{
+    unsigned char hash[20];
+    SHA1((unsigned char *)data.c_str(), data.size(), hash);
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0');
+    for (const auto &byte : hash)
+    {
+        ss << std::setw(2) << static_cast<int>(byte);
+    }
+    std::cout << ss.str() << std::endl;
     return ss.str();
 }
 

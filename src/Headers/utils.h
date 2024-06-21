@@ -20,6 +20,7 @@ struct TreeEntry
 #define CHUNK 16384
 
 std::string sha1_hex(const std::string &input);
+std::string sha_file(std::string basicString);
 std::string hash_digest(const std::string &input);
 void compressFile(const std::string &data, uLong *bound, unsigned char *dest);
 int decompress(FILE *source, FILE *dest);
