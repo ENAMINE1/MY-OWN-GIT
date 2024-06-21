@@ -145,40 +145,92 @@ int decompress(FILE *source, FILE *dest)
     return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
 
-std::set<std::string> parse_tree_object(FILE *tree_object)
+/*
+    example of entry of a tree object
+    "tree"+bytes+'\0'+entry1+'\0'+entry2+'\0'+entry3
+    where each entry is of the form
+    100644 file.txt\0<40-byte SHA-1 hash for file.txt> "OR"
+    040000 dir\0<20-byte SHA-1 hash for the tree object "dir">
+*/
+
+std::set<Entry> read_entries(FILE *file)
+{
+    std::set<Entry> entries;
+    char buffer[6 + 1]; // Buffer to read the mode (6 characters + null terminator)
+    char space;         // To read the space character
+
+    while (fread(buffer, 1, 6, file) == 6 && fread(&space, 1, 1, file) == 1)
+    {
+        if (space != ' ')
+        {
+            std::cerr << "Error: Expected space after mode!" << std::endl;
+            break;
+        }
+
+        Entry entry;
+
+        // Read mode (6 characters)
+        buffer[6] = '\0'; // Null terminate the buffer to make it a C-string
+        entry.mode = buffer;
+
+        // Read filename until the null terminator
+        char ch;
+        entry.filename.clear();
+        while (fread(&ch, 1, 1, file) == 1 && ch != '\0')
+        {
+            entry.filename += ch;
+        }
+
+        if (ch != '\0')
+        {
+            std::cerr << "Error: Null terminator not found after filename!" << std::endl;
+            break;
+        }
+
+        // Read SHA-1 hash (20 bytes)
+        char hash[41];
+        if (fread(hash, 1, 40, file) != 40)
+        {
+            std::cerr << "Error: Could not read 20-byte SHA-1 hash!" << std::endl;
+            break;
+        }
+        hash[40] = '\0'; // Null terminate the buffer to make it a C-string
+        entry.sha1_hash.assign(hash, 41);
+
+        entries.insert(entry);
+    }
+
+    return entries;
+}
+
+std::set<Entry> parse_tree_object(FILE *tree_object)
 {
     rewind(tree_object); // set the file position indicator to the beginning of the file
-
-    std::vector<std::string> unsorted_directories;
-    char mode[7];
-    char type[5];
-    char filename[256];
-    unsigned char hash[20];
-    while (fscanf(tree_object, "%6s", mode) != EOF)
+    // print the tree_object file content
+    char ch;
+    bool foundNull = false;
+    std::string object_type;
+    // Read the file until the first '\0' character
+    while (fread(&ch, 1, 1, tree_object) == 1)
     {
-        // read the filename (up to the null byte)
-        int i = 0;
-        int c;
-        while ((c = fgetc(tree_object)) != 0 && c != EOF)
+        object_type.push_back(ch);
+        if (ch == '\0')
         {
-            // if the character is a blank space, continue
-            if (c == ' ')
-            {
-                continue;
-            }
-            filename[i++] = c;
+            foundNull = true;
+            break;
         }
-        filename[i] = '\0'; // null-terminate the filename
-        mode[6] = '\0';
-        // read the hash
-        fread(hash, 1, 20, tree_object);
-        // shift the mode string to the right and prepend 0 till the number contains 6 digits
-
-        std::string file_details = std::string(mode) + " " + std::string(reinterpret_cast<char *>(hash), 20) + " " + std::string(filename);
-        unsorted_directories.push_back(file_details);
     }
-    std::sort(unsorted_directories.begin(), unsorted_directories.end());                                // sort the directories lexicographically
-    std::set<std::string> sorted_directories(unsorted_directories.begin(), unsorted_directories.end()); // remove duplicates
+    if(!foundNull)
+    {
+        std::cerr<<"Fatal: Invalid tree object format."<<std::endl;
+        return {};
+    }
+    else if(object_type.substr(0,4) != "tree")
+    {
+        std::cerr<<"Fatal: Invalid object type."<<std::endl;
+        return {};
+    }
+    std::set<Entry> sorted_directories = read_entries(tree_object);
     return sorted_directories;
 }
 

@@ -14,7 +14,7 @@ int git_cat_file(int argc, char *argv[])
         return EXIT_FAILURE;
     }
     std::string flag = argv[2];
-    if(flag != "-p" && flag != "-t" && flag != "-s")
+    if (flag != "-p" && flag != "-t" && flag != "-s")
     {
         std::cerr << "Invalid flag, usage: cat-file -p/-t/-s <blob_sha>\n";
         return EXIT_FAILURE;
@@ -56,11 +56,11 @@ int git_cat_file(int argc, char *argv[])
             break;
         }
     }
-    if(flag == "-p")
-        std::cout << std::string_view(buf).substr(buf.find('\0') + 1);
-    else if(flag == "-t")
+    if (flag == "-p")
+        std::cout << std::string_view(buf).substr(buf.find('\0') + 1) << std::endl;
+    else if (flag == "-t")
         std::cout << "blob\n";
-    else if(flag == "-s")
+    else if (flag == "-s")
         std::cout << buf.size() << '\n';
     return EXIT_SUCCESS;
 }

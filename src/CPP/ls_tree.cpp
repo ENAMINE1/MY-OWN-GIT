@@ -1,7 +1,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
-#include<cstring>
+#include <cstring>
 #include <sstream>
 #include <set>
 #include <zlib.h>
@@ -9,41 +9,14 @@
 #include "utils.h"
 
 // format of file object
+/*
+    example of entry of a tree object
+    "tree"+bytes+'\0'+entry1+'\0'+entry2+'\0'+entry3
+    where each entry is of the form
+    100644 file.txt\0<20-byte SHA-1 hash for file.txt> "OR"
+    040000 dir\0<20-byte SHA-1 hash for the tree object "dir">
+*/
 
-
-// format of the tree object
-// <mode> SP <treehash>\0<filename>
-
-/* For files, the valid values are:
-    100644(regular file)
-    100755(executable file)
-    120000(symbolic link)
-    For directories, the value is 040000*/
-
-// std::set<std::string> parse_tree_object(FILE *file)
-// {
-//     std::set<std::string> directories;
-//     char buffer[CHUNK];
-//     while (fgets(buffer, sizeof(buffer), file) != NULL)
-//     {
-//         // parse the tree object
-//         TreeEntry entry;
-//         char *token = strtok(buffer, " ");
-//         entry.mode = token;
-//         token = strtok(NULL, " ");
-//         entry.type = token;
-//         token = strtok(NULL, " ");
-//         entry.hash = token;
-//         token = strtok(NULL, "\n");
-//         entry.name = token;
-//         // check if the entry is a directory
-//         if (entry.type == "tree")
-//         {
-//             directories.insert(entry.name);
-//         }
-//     }
-//     return directories;
-// }
 int ls_tree(const char *object_hash)
 {
     // retrieve the object path
@@ -65,17 +38,26 @@ int ls_tree(const char *object_hash)
         std::cerr << "Failed to create output file.\n";
         return EXIT_FAILURE;
     }
+    // decompress the tree sha1 hash and store the content of the tree object in the output file
     if (decompress(object_file, output_file) != EXIT_SUCCESS)
     {
         std::cerr << "Failed to decompress object file.\n";
         return EXIT_FAILURE;
     }
-    std::set<std::string> directories = parse_tree_object(output_file);
+    std::set<Entry> directories = parse_tree_object(output_file);
     // print the directories
-    std::cout << "Directories: " << std::endl;
-    for (const std::string &directory : directories)
+    if (!directories.empty())
     {
-        std::cout << directory << '\n';
+        std::cout << "Directories: " << std::endl;
+        for (const Entry &directory : directories)
+        {
+            std::string object_type;
+            if (directory.mode == "040000")
+                object_type = "tree";
+            else
+                object_type = "blob";
+            std::cout << directory.mode << " " << object_type << " " << directory.sha1_hash << '\t' << directory.filename << std::endl;
+        }
     }
     return EXIT_SUCCESS;
 }

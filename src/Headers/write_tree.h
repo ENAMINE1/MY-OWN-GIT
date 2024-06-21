@@ -6,6 +6,6 @@
 #include <vector>
 
 std::string write_tree(const std::string &directory);
-std::vector<TreeEntry> read_index();
+// std::vector<Entry> read_index();
 
 #endif // WRITE_TREE_H

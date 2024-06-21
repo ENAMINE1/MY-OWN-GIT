@@ -9,12 +9,16 @@
 // example of a tree object:
 // 100644 blob 3cf56579491f151d82b384c211cf1971c300fbf8 .dockerignore
 // 040000 tree 918756f1a4e5d648ae273801359c440c951555f9    build
-struct TreeEntry
+struct Entry
 {
     std::string mode;
-    std::string type;
-    std::string hash;
-    std::string name;
+    std::string filename;
+    std::string sha1_hash;
+
+    bool operator<(const Entry &other) const
+    {
+        return filename < other.filename;
+    }
 };
 
 #define CHUNK 16384
@@ -28,6 +32,6 @@ void compress_and_store(const std::string &hash, const std::string &content, std
 bool decompress_object(std::string &buf, const std::string &data);
 bool compress_object(std::string &buf, const std::string &data);
 int decompress(FILE *source, FILE *dest);
-std::set<std::string> parse_tree_object(FILE *file);
+std::set<Entry> parse_tree_object(FILE *file);
 
 #endif

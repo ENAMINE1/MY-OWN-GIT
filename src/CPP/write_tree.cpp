@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <openssl/sha.h>
 #include <zlib.h>
+#include <map>
 #include "write_tree.h"
 #include "hash_object.h"
 
@@ -14,10 +15,23 @@
 // A tree object will contain the state of working directory in the form of other tree and blob objects
 std::string write_tree(const std::string &directory)
 {
+    std::cout << "Writing tree for directory: " << directory << std::endl;
     std::vector<std::string> tree_entries;
-    std::vector<std::string> skip = {
-        ".git", "server", "CMakeCache.txt",
-        "CMakeFiles", "Makefile", "cmake_install.cmake"};
+    std::vector<std::string> skip;
+    // = {
+    //     ".git", "server", "CMakeCache.txt",
+    //     "CMakeFiles", "Makefile", "cmake_install.cmake"};
+    // read the .gitignore file and store the entries in the skip vector
+    std::ifstream gitignore(".gitignore");
+    if (gitignore.is_open())
+    {
+        std::string line;
+        while (std::getline(gitignore, line))
+        {
+            skip.push_back(line);
+        }
+    }
+    
     for (const auto &entry : std::filesystem::directory_iterator(directory))
     {
         std::string path = entry.path().string();
@@ -28,22 +42,30 @@ std::string write_tree(const std::string &directory)
             continue;
         }
         std::error_code ec;
+        // look carefully there is a space after each number in the entry_type
         std::string entry_type = std::filesystem::is_directory(path, ec) ? "040000 " : "100644 ";
         std::string relative_path = path.substr(path.find(directory) + directory.length() + 1);
         std::string hash = std::filesystem::is_directory(path, ec) ? write_tree(path.c_str()) : hash_object(path.c_str());
         std::string object_type;
-        if (entry_type == "040000 ")
-            object_type = "tree";
-        else
-            object_type = "blob";
-        std::cerr << entry_type + ' ' << object_type << ' ' + hash + '\t' + relative_path << std::endl;
+        // if (entry_type == "040000 ")
+        //     object_type = "tree";
+        // else
+        //     object_type = "blob";
+        // std::cerr << entry_type + ' ' << object_type << ' ' + hash + '\t' + relative_path << std::endl;
 
         tree_entries.emplace_back(path + '\0' + entry_type + relative_path + '\0' + hash);
     }
-    // sort the entries based on the absolute path
+    // sort the entries based on the absolute path O(nlogn)
     std::sort(tree_entries.begin(), tree_entries.end());
     // delete the path from the beginning of each entry
     int bytes = 0;
+    /*
+    example of entry of a tree object
+    "tree"+bytes+'\0'+entry1+'\0'+entry2+'\0'+entry3
+    where each entry is of the form
+    100644 file.txt\0<20-byte SHA-1 hash for file.txt> "OR"
+    040000 dir\0<20-byte SHA-1 hash for the tree object "dir">
+    */
     for (auto &entry : tree_entries)
     {
         entry = entry.substr(entry.find('\0') + 1);
@@ -55,8 +77,10 @@ std::string write_tree(const std::string &directory)
     {
         tree_content += entry;
     }
+    std::cerr << tree_content << std::endl;
     // storing the tree object
     std::string tree_hash = compute_sha1(tree_content, false);
     compress_and_store(tree_hash.c_str(), tree_content, ".");
+    std::cout << "Tree hash for :" << directory << tree_hash << std::endl;
     return tree_hash;
 }
