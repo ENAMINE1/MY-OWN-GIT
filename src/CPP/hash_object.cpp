@@ -10,6 +10,7 @@
 void hash_object(const std::string &file)
 {
     // Read file contents
+    // Read file contents
     std::ifstream t(file);
     std::stringstream data;
     data << t.rdbuf();

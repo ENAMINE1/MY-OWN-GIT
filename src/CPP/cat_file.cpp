@@ -35,7 +35,7 @@ int git_cat_file(int argc, char *argv[])
     }
 
     const std::string blob_data = std::string(std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>());
-    // std::cout << blob_data;
+    std::cout << blob_data;
     // i have the compressed data of the file which needs to be decompressed using zlib
     auto buf = std::string();
     buf.resize(blob_data.size());

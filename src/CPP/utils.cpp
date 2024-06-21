@@ -3,6 +3,8 @@
 #include <openssl/sha.h>
 #include <zlib.h>
 #include <iostream>
+#include <algorithm>
+#include <vector>
 #include <set>
 #include <fstream>
 #include "utils.h"
@@ -48,22 +50,30 @@ void compressFile(const std::string &data, uLong *bound, unsigned char *dest)
 
 int decompress(FILE *source, FILE *dest)
 {
+    // ret: Variable to hold the return codes from zlib functions.
     int ret;
+    // have: Variable to keep track of how much data has been decompressed.
     unsigned have;
+    // z_stream strm: Structure required by zlib to manage the decompression process.
     z_stream strm;
+    // in[CHUNK] and out[CHUNK]: Buffers for input and output data.
     unsigned char in[CHUNK];
     unsigned char out[CHUNK];
 
+    // Initialize the z_stream structure.
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
     strm.opaque = Z_NULL;
+    // inflateInit initializes the z_stream structure for decompression.
     ret = inflateInit(&strm);
     if (ret != Z_OK)
         return ret;
 
     do
     {
+        // Read data from the source file into the input buffer.
         strm.avail_in = fread(in, 1, CHUNK, source);
+        // if ferror(source) returns a non-zero value, an error occurred while reading from the source file.
         if (ferror(source))
         {
             (void)inflateEnd(&strm);
@@ -101,15 +111,40 @@ int decompress(FILE *source, FILE *dest)
     return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
 
-std::set<std::string> parse_tree_object(FILE *file)
+std::set<std::string> parse_tree_object(FILE *tree_object)
 {
-    std::set<std::string> directories;
-    char buf[CHUNK];
-    std::string mode;
-    while (fread(buf, 1, CHUNK, file) > 0)
+    rewind(tree_object); // set the file position indicator to the beginning of the file
+
+    std::vector<std::string> unsorted_directories;
+    char mode[7];
+    char type[5];
+    char filename[256];
+    unsigned char hash[20];
+    while (fscanf(tree_object, "%6s", mode) != EOF)
     {
-        mode += buf;
+        // read the filename (up to the null byte)
+        int i = 0;
+        int c;
+        while ((c = fgetc(tree_object)) != 0 && c != EOF)
+        {
+            // if the character is a blank space, continue
+            if (c == ' ')
+            {
+                continue;
+            }
+            filename[i++] = c;
+        }
+        filename[i] = '\0'; // null-terminate the filename
+        mode[6] = '\0';
+        // read the hash
+        fread(hash, 1, 20, tree_object);
+        // shift the mode string to the right and prepend 0 till the number contains 6 digits
+
+
+        std::string file_details = std::string(mode) + " " + std::string(reinterpret_cast<char *>(hash), 20) + " " + std::string(filename);
+        unsorted_directories.push_back(file_details);
     }
-    directories.insert(mode);
-    return directories;
+    std::sort(unsorted_directories.begin(), unsorted_directories.end());                                // sort the directories lexicographically
+    std::set<std::string> sorted_directories(unsorted_directories.begin(), unsorted_directories.end()); // remove duplicates
+    return sorted_directories;
 }

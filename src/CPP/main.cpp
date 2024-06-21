@@ -7,6 +7,8 @@
 #include "write_tree.h"
 #include "git_add.h"
 
+// argv[0] = "./git_c" arg[1] = command arg[2] = flags (optional) arg[3] = file
+
 int main(int argc, char *argv[])
 {
     // Flush after every std::cout / std::cerr
@@ -40,7 +42,7 @@ int main(int argc, char *argv[])
             std::cerr << "Less than 3 arguments\n";
             return EXIT_FAILURE;
         }
-        if (ls_tree(argv[3]))
+        if (ls_tree(argv[2]))
         {
             std::cerr << "Less than 3 arguments\n";
             return EXIT_FAILURE;

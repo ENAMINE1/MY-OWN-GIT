@@ -7,7 +7,10 @@
 #include <openssl/sha.h>
 #include <zlib.h>
 #include "write_tree.h"
-#include "utils.h"
+
+// The git write - tree command creates a tree object from the current state of the "staging area".The staging area is a place where changes go when you run git add. The staging area is also known as the "index".The tree object represents the state of the working directory at a particular point in time. It contains the names of files and directories, along with their modes and hashes.
+
+// A tree object will contain the state of working directory in the form of other tree and blob objects
 
 void write_tree()
 {
