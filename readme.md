@@ -6,6 +6,8 @@ If you are intrigued by the workings of Git and want to learn about its internal
 
 The tool includes several commands such as `init`, `add`, `commit`, and `clone`.
 
+**Here is an in depth guide on the internas of the .git folder - [What is in that .git directory?](https://blog.meain.io/2023/what-is-in-dot-git/) 🤯.**
+
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
