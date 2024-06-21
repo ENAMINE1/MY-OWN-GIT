@@ -27,6 +27,9 @@ COPY ./src/CPP /app/src/CPP
 COPY ./src/Headers /app/src/Headers
 COPY ./CMakeLists.txt /app/CMakeLists.txt
 
+# Copy the bashrc_welcome.txt file and rename it to .bashrc
+COPY ./Welcome.txt /root/.bashrc
+
 # Build the project
 RUN cd /app
 RUN cmake .

@@ -5,8 +5,9 @@ Welcome to the **MY OWN GIT** project! This project tries to mimic some of the f
 If you are intrigued by the workings of Git and want to learn about its internals, then this repo is for you. Hope you get to learn something new! ✨
 
 The tool includes several commands such as `init`, `add`, `commit`, and `clone`.
-Here is an in depth guide on the internas of the .git folder - [What is in that .git directory?](https://blog.meain.io/2023/what-is-in-dot-git/) 🤯.
+
 **Here is an in depth guide on the internas of the .git folder - [What is in that .git directory?](https://blog.meain.io/2023/what-is-in-dot-git/) 🤯.**
+It is recommended to go through the above blog to get a feel for the interal workings of the .git folder.
 
 ## Table of Contents
 
@@ -52,7 +53,7 @@ Ensure you have the following before starting:
 1. Clone the repository to your local machine.
    ```bash
    git clone git@github.com:ENAMINE1/MY-OWN-GIT.git
-   cd git_clone_tool
+   cd MY-OWN-GIT
    ```
 2. Build the Docker image.
    ```bash

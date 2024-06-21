@@ -1,0 +1,16 @@
+# bashrc_welcome.txt
+
+# Function to display a welcome message and list of commands
+function my_own_git_welcome() {
+    echo -e "\n\033[1;32mWelcome to the MY-OWN-GIT Project! 🚀\033[0m"
+    echo -e "This project mimics some features of Git to help you learn how it works behind the scenes.\n"
+    echo -e "Here are the available commands you can run in this containerized environment:\n"
+    echo -e "\033[1;34mgit_clone init\033[0m      - Initialize a new repository"
+    echo -e "\033[1;34mgit_clone add <file>\033[0m - Add a file to the staging area"
+    echo -e "\033[1;34mgit_clone commit -m \"<message>\"\033[0m - Commit staged changes"
+    echo -e "\033[1;34mgit_clone clone <repository_url>\033[0m - Clone an existing repository\n"
+    echo -e "Happy coding! 💻✨"
+}
+
+# Call the welcome function
+my_own_git_welcome
