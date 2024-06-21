@@ -33,7 +33,8 @@ int main(int argc, char *argv[])
     else if (command == "hash-object")
     {
         std::string filepath(argv[3]);
-        hash_object(filepath);
+        std::string hash_value = hash_object(filepath);
+        std::cout << hash_value << '\n';
     }
     else if (command == "ls-tree")
     {

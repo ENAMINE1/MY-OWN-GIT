@@ -77,22 +77,43 @@ Once inside the Docker container, you can use the `git_clone` tool with the foll
 
 - **init**: Initialize a new repository.
   ```bash
-  git_clone init
+  git_2.0 init
   ```
+  
+- **hash-object**: Compute the object ID and optionally creates a blob from a file.
+   ```bash
+   git_2.0 hash-object -w <file>
+   ```
+
+- **write-tree**: Write the current index to the repository.
+   ```bash
+
+   git_2.0 write-tree <filepath>
+   ```
+
+- **ls-tree**: List the contents of a tree object.
+   ```bash
+   git_2.0 ls-tree <tree_id>
+   ```
+
+- **cat-file**: Provide content or type and size information for repository objects.
+   ```bash
+   git_2.0 cat-file -p <object_id>
+   ```
 
 - **add**: Add a file to the staging area.
   ```bash
-  git_clone add <file>
+  git_2.0 add <file>
   ```
 
 - **commit**: Commit staged changes.
   ```bash
-  git_clone commit -m "Commit message"
+  git_2.0 commit -m "Commit message"
   ```
 
 - **clone**: Clone an existing repository.
   ```bash
-  git_clone clone <repository_url>
+  git_2.0 clone <repository_url>
   ```
 
 ## File Structure 📂
