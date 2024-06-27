@@ -34,9 +34,15 @@ int main(int argc, char *argv[])
     }
     else if (command == "hash-object")
     {
+        if (argc < 3)
+        {
+            std::cerr << "Incorrect usage of hash-object.\nUsage hash-object -w <file_path>\n";
+            exit(EXIT_FAILURE);
+        }
         std::string filepath(argv[3]);
         std::string hash_value = hash_object(filepath);
-        std::cout << hash_value << '\n';
+        if (hash_value != "")
+            std::cout << hash_value << '\n';
     }
     else if (command == "ls-tree")
     {

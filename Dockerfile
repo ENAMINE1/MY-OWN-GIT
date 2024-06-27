@@ -9,46 +9,50 @@ RUN apt-get update \
     && apt-get install -y \
     cmake \
     gcc \
-    g++
-
-RUN apt-get update \
-    && apt-get install -y \
+    g++ \
     zlib1g \
     zlib1g-dev \
-    libssl-dev
+    libssl-dev \
+    tree \
+    bash-completion
 
-RUN dpkg -s zlib1g libssl-dev
-RUN apt-get install tree
+# Create a non-root user and group
+RUN groupadd -r user && useradd -r -g user -m -d /home/user -s /bin/bash user
 
-# Create necessary directories
-RUN mkdir -p /app/src/CPP /app/src/Headers
+# Create necessary directories and set permissions
+RUN mkdir -p /app/src/CPP /app/src/Headers \
+    && chown -R user:user /app
 
 # Copy source code and CMakeLists.txt
 COPY ./src/CPP /app/src/CPP
 COPY ./src/Headers /app/src/Headers
 COPY ./CMakeLists.txt /app/CMakeLists.txt
 
-# Copy the bashrc_welcome.txt file and rename it to .bashrc
-COPY ./Welcome.txt /root/.bashrc
-
-RUN mkdir -p /etc/bash_completion.d
-RUN touch ~/.gitconfig
-# Copy the completion script
-COPY ./git_clone_completion.sh /etc/bash_completion.d/git_clone_completion.sh
-
 # Build the project
-RUN cd /app
-RUN cmake .
-RUN make
+RUN cd /app \
+    && cmake . \
+    && make \
+    && cp /app/git_c /usr/local/bin/git_2.0 \
+    && chmod +x /usr/local/bin/git_2.0
 
-# Copy the built executable to a directory in the PATH
-RUN cp /app/git_c /usr/local/bin/git_2.0
+# Copy the Welcome.txt file to the user's home directory as .bashrc
+COPY ./Welcome.txt /home/user/.bashrc
 
+# Create directory for bash completion script and copy the script
+RUN mkdir -p /etc/bash_completion.d
+COPY ./git_clone_completion.sh /etc/bash_completion.d/git_clone_completion.sh
+RUN chmod +r /etc/bash_completion.d/git_clone_completion.sh
 
-# Set executable permissions
-RUN chmod +x /usr/local/bin/git_2.0
+RUN echo "source /etc/bash_completion.d/git_clone_completion.sh" >> /home/user/.bashrc
 
-RUN echo "source /etc/bash_completion.d/git_clone_completion.sh" >> /root/.bashrc
+# Change ownership of the /app directory and /home/user directory to the non-root user
+RUN chown -R user:user /app /home/user
+
+# Switch to the non-root user
+USER user
+
+# Set the working directory to the non-root user's home directory
+WORKDIR /home/user
 
 # Define the command that should be run when a container is started from this image
 CMD ["bash"]
