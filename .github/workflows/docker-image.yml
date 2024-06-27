@@ -26,7 +26,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Push Docker image to Docker Hub
+      - name: Tag Docker image with latest
         run: |
           docker tag git_2.0:$(date +%s) ${{ secrets.DOCKERHUB_USERNAME }}/git_2.0:latest
+
+      - name: Push Docker image to Docker Hub
+        run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/git_2.0:latest
