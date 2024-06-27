@@ -11,19 +11,19 @@ It is recommended to go through the above blog to get a feel for the interal wor
 
 ## Table of Contents 📑
 
-1. [System Requirements](#system-requirements)
-2. [Installing Docker Desktop](#installing-docker-desktop)
+1. [System Requirements](#system-requirements-)
+2. [Installing Docker Desktop](#installing-docker-desktop-)
    - [Windows](#windows)
    - [MacOS](#macos)
    - [Linux](#linux)
-3. [Building the Docker Image](#building-the-docker-image)
-4. [Running the Docker Container](#running-the-docker-container)
-5. [Using the Git Clone Tool](#using-the-git-clone-tool)
-   - [Commands](#commands)
-6. [File Structure](#file-structure)
-7. [Contributing](#contributing)
+3. [Building the Docker Image](#building-the-docker-image-%EF%B8%8F)
+4. [Running the Docker Container](#running-the-docker-container-%EF%B8%8F)
+5. [Using the Git Clone Tool](#using-the-git-clone-tool-%EF%B8%8F)
+   - [Commands](#commands-)
+6. [File Structure](#file-structure-)
+7. [Contributing](#contributing-)
 
-## System Requirements  📋
+## System Requirements 📋
 
 Ensure you have the following before starting:
 - A machine with at least 2GB of RAM.
