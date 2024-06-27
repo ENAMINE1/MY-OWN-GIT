@@ -18,7 +18,7 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+          docker build . --file Dockerfile --tag git_2.0:$(date +%s)
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -28,5 +28,5 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker tag my-image-name:$(date +%s) ${{ secrets.DOCKERHUB_USERNAME }}/my-image-name:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-image-name:latest
+          docker tag git_2.0:$(date +%s) ${{ secrets.DOCKERHUB_USERNAME }}/git_2.0:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/git_2.0:latest
