@@ -57,21 +57,21 @@ Ensure you have the following before starting:
    ```
 2. Build the Docker image.
    ```bash
-   docker build -t git_clone_tool:latest .
+   docker build -t git_2.0:latest .
    ```
 
 ## Running the Docker Container 🏃‍♂️
 
 1. Run the Docker container.
    ```bash
-   docker run -it git_clone_tool:latest
+   docker run -it -v "$(pwd):/app" git_2.0:latest
    ```
 
-This command will start a bash session inside the container, allowing you to interact with the `git_clone` tool.
+This command will start a bash session inside the container, allowing you to interact with the `git_2.0` tool.
 
 ## Using the Git Clone Tool 🛠️
 
-Once inside the Docker container, you can use the `git_clone` tool with the following commands:
+Once inside the Docker container, you can use the `git_2.0` tool with the following commands:
 
 ### Commands
 
@@ -79,7 +79,7 @@ Once inside the Docker container, you can use the `git_clone` tool with the foll
   ```bash
   git_2.0 init
   ```
-  
+
 - **hash-object**: Compute the object ID and optionally creates a blob from a file.
    ```bash
    git_2.0 hash-object -w <file>
