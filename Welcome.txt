@@ -5,10 +5,14 @@ function my_own_git_welcome() {
     echo -e "\n\033[1;32mWelcome to the MY-OWN-GIT Project! 🚀\033[0m"
     echo -e "This project mimics some features of Git to help you learn how it works behind the scenes.\n"
     echo -e "Here are the available commands you can run in this containerized environment:\n"
-    echo -e "\033[1;34mgit_clone init\033[0m      - Initialize a new repository"
-    echo -e "\033[1;34mgit_clone add <file>\033[0m - Add a file to the staging area"
-    echo -e "\033[1;34mgit_clone commit -m \"<message>\"\033[0m - Commit staged changes"
-    echo -e "\033[1;34mgit_clone clone <repository_url>\033[0m - Clone an existing repository\n"
+    echo -e "\033[1;34mgit_2.0 init\033[0m      - Initialize a new repository"
+    echo -e "\033[1;34mgit_2.0 hash-object -w <file>\033[0m - Compute the object ID and optionally create a blob from a file"
+    echo -e "\033[1;34mgit_2.0 write-tree <filepath>\033[0m - Write the current index to the repository"
+    echo -e "\033[1;34mgit_2.0 ls-tree <tree_id>\033[0m - List the contents of a tree object"
+    echo -e "\033[1;34mgit_2.0 cat-file -p <object_id>\033[0m - Provide content or type and size information for repository objects"
+    echo -e "\033[1;34mgit_2.0 add <file>\033[0m - Add a file to the staging area"
+    echo -e "\033[1;34mgit_2.0 commit -m \"Commit message\"\033[0m - Commit staged changes"
+    echo -e "\033[1;34mgit_2.0 clone <repository_url>\033[0m - Clone an existing repository\n"
     echo -e "Happy coding! 💻✨"
 }
 
