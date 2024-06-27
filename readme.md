@@ -64,7 +64,7 @@ Ensure you have the following before starting:
 
 1. Run the Docker container.
    ```bash
-   docker run -it -v "$(pwd):/app" git_2.0:latest
+   docker run -it git_2.0:latest
    ```
 
 This command will start a bash session inside the container, allowing you to interact with the `git_2.0` tool.
@@ -148,15 +148,18 @@ Once inside the Docker container, you can use the `git_2.0` tool with the follow
 
 ## Contributing 🤝
 
-If you would like to contribute to this project, please follow the steps below:
+To contribute to this project, please follow these steps:
 
 1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make the appropriate changes in the files.
-4. Add changes to reflect the changes made.
-5. Commit your changes (`git commit -am 'Add new feature'`).
-6. Push to the branch (`git push origin feature-branch`).
-7. Create a Pull Request.
+2. Create a new branch using the command `git checkout -b feature-branch`.
+3. Make the necessary changes to the files.
+4. To preview your changes, run the following command:
+   ```bash
+   docker run -it -v "$(pwd):/app" git_2.0:latest
+   ```
+5. Commit your changes using `git commit -am 'Add new feature'`.
+6. Push your changes to the branch with `git push origin feature-branch`.
+7. Create a Pull Request to merge your changes into the main branch.
 
 Thank you for your contribution! 🌟
 
