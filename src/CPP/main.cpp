@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     }
     else if (command == "hash-object")
     {
-        if (argc < 3)
+        if (argc < 4)
         {
             std::cerr << "Incorrect usage of hash-object.\nUsage hash-object -w <file_path>\n";
             exit(EXIT_FAILURE);
