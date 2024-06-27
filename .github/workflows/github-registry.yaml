@@ -25,7 +25,7 @@ jobs:
           # Convert GitHub username and repository name to lowercase
           GITHUB_USERNAME=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           REPOSITORY_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          REPOSITORY_URL="docker.pkg.github.com/${GITHUB_USERNAME}/${REPOSITORY_NAME}/git_2.0"
+          REPOSITORY_URL="ghcr.io/${GITHUB_USERNAME}/${REPOSITORY_NAME}/git_2.0"
           docker build . --file Dockerfile --tag $REPOSITORY_URL:$IMAGE_TAG
 
       - name: Login to GitHub Container Registry
