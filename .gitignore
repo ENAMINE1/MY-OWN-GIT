@@ -4,4 +4,3 @@ src/Temp/
 .vscode/
 cmake_install.cmake
 CMakeCache.txt
-.github/
