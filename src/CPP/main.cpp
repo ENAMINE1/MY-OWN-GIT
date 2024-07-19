@@ -9,13 +9,17 @@
 #include "git_add.h"
 #include "commit_tree.h"
 #include "git_checkout.h"
+#include "utils.h"
 
 // argv[0] = "./git_c" arg[1] = command arg[2] = flags (optional) arg[3] = file
+fs::path curr_dir;
+fs::path git_dir;
+string git_path;
 
 int main(int argc, char *argv[])
 {
     std::ios_base::sync_with_stdio(false);
-    std::cin.tie(nullptr); 
+    std::cin.tie(nullptr);
     // Flush after every std::cout / std::cerr
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
@@ -25,8 +29,19 @@ int main(int argc, char *argv[])
         std::cerr << "No command provided.\n";
         return EXIT_FAILURE;
     }
-
     std::string command = argv[1];
+    if (command != "init")
+    {
+        curr_dir = fs::current_path();
+        git_dir = locateGitFolderRelative(curr_dir);
+        git_path = git_dir.string();
+        if (git_dir.empty())
+        {
+            cout << "Initialise a Git repository first!" << endl;
+            return 0;
+        }
+    }
+
     if (command == "init")
     {
         git_init();
@@ -64,9 +79,9 @@ int main(int argc, char *argv[])
     {
         // usage git_clone wirte-tree directory path
         if (argc < 3)
-            std::cout << "Usage: write-tree <file_path>" << std::endl;
+            std::cout << "Usage: write-tree <file_path>" << endl;
         else if (argc > 3)
-            std::cout << "Too many parmeters to write-tree.\n Usage: write-tree <file_path>" << std::endl;
+            std::cout << "Too many parmeters to write-tree.\n Usage: write-tree <file_path>" << endl;
         std::string tree_hash = write_tree(".");
         if (tree_hash.empty())
         {
@@ -93,7 +108,9 @@ int main(int argc, char *argv[])
         if (argc > 5)
         {
             // if no file with the name COMMIT_EDITMSG is present then wrong command because no earlier comimits
-            std::ifstream file(".git/COMMIT_EDITMSG");
+            string file_path = git_path + "/COMMIT_EDITMSG";
+            // cout << MAGENTA << file_path << RESET << endl;
+            std::ifstream file(file_path);
             if (!file)
                 std::cerr << "Fatal Errro: No previous commits found\n";
             else
@@ -105,7 +122,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    std::ofstream file(".git/COMMIT_EDITMSG");
+                    std::ofstream file(file_path);
                     if (!file)
                     {
                         std::cerr << "Fatal Error: Failed to create .git/COMMIT_EDITMSG file\n";
@@ -120,7 +137,7 @@ int main(int argc, char *argv[])
             }
         }
         // create ./git/COMMIT_EDITMSG file and write the commit message to it
-        std::ofstream file(".git/COMMIT_EDITMSG");
+        std::ofstream file("file_path");
         if (!file)
         {
             std::cerr << "Fatal Error: Failed to create .git/COMMIT_EDITMSG file\n";

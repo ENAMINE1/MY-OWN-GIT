@@ -8,6 +8,8 @@
 #include "ls_tree.h"
 #include "commit_tree.h"
 
+// extern string git_path;
+
 int git_cat_file(int argc, char *argv[])
 {
     if (argc <= 3)
@@ -28,7 +30,10 @@ int git_cat_file(int argc, char *argv[])
     const std::string dir_name = value.substr(0, 2);
     // the rest of the sha1 hash value is the actual file name inside the folder
     const std::string blob_sha = value.substr(2);
-    const auto blob_path = std::filesystem::path(".git") / "objects" / dir_name / blob_sha;
+    const auto blob_path = std::filesystem::path(git_path) / "objects" / dir_name / blob_sha;
+    // cout << MAGENTA << __LINE__ << " cat-file.cpp " << git_path << RESET << endl;
+    // cout << MAGENTA << __LINE__ << " cat-file.cpp " << blob_path << RESET << endl;
+
     std::ifstream input = std::ifstream(blob_path);
     if (!input.is_open())
     {
@@ -62,7 +67,7 @@ int git_cat_file(int argc, char *argv[])
 
     if (flag == "-p")
     {
-        if(buf.find("commit") == 0)
+        if (buf.find("commit") == 0)
         {
             // std::cout << "Commit object\n";
             // call commit-tree
@@ -76,12 +81,12 @@ int git_cat_file(int argc, char *argv[])
             ls_tree((dir_name + blob_sha).c_str());
             return EXIT_SUCCESS;
         }
-        std::cout << std::string_view(buf).substr(buf.find('\0') + 1) << std::endl;
+        std::cout << std::string_view(buf).substr(buf.find('\0') + 1) << endl;
     }
     else if (flag == "-t")
     {
         const auto space = buf.find(' ');
-        std::cout << std::string_view(buf).substr(0, space) << std::endl;
+        std::cout << std::string_view(buf).substr(0, space) << endl;
     }
     else if (flag == "-s")
         std::cout << buf.size() << '\n';

@@ -46,12 +46,12 @@ int git_checkout(int argc, char *argv[])
         fclose(output_file);
 
         // extract the tree hash form the commit object
-        // cout<<commit_content<<endl;
+        cout<<commit_content<<endl;
         std::string tree_hash = commit_content.substr(6, 40);
         tree_hash = tree_hash.substr(tree_hash.length() - 31);
         // cout << tree_hash << endl;
 
-        update_working_directory(tree_hash);
+        // update_working_directory(tree_hash);
     }
     return 0;
 }

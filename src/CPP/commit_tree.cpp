@@ -20,7 +20,7 @@ std::string get_author()
 
     // if (!configFile.is_open())
     // {
-    //     std::cerr << "Failed to open Git config file." << std::endl;
+    //     std::cerr << "Failed to open Git config file." << endl;
     //     exit(EXIT_FAILURE);
     // }
 
@@ -106,7 +106,7 @@ std::string hash_commit(const std::string &commit_content_str)
     {
         hash_str << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
     }
-    compress_and_store(hash_str.str(), full_content_str, ".");
+    compress_and_store(hash_str.str(), full_content_str);
     return hash_str.str();
 }
 
@@ -123,7 +123,7 @@ std::string getHomeDirectory()
 std::string show_commit(const std::string &commit_hash)
 {
     char object_path[64];
-    snprintf(object_path, sizeof(object_path), ".git/objects/%.2s/%s", commit_hash.c_str(), commit_hash.c_str() + 2);
+    snprintf(object_path, sizeof(object_path), git_path.c_str(), "/objects/%.2s/%s", commit_hash.c_str(), commit_hash.c_str() + 2);
     FILE *object_file = fopen(object_path, "rb");
     if (object_file == nullptr)
     {

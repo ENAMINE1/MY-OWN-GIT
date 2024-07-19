@@ -56,16 +56,16 @@ void git_add(const std::string &filepath)
     std::ofstream index_file(".git/index", std::ios::binary | std::ios::app);
     if (!index_file)
     {
-        std::cerr << "Error: could not open .git/index" << std::endl;
+        std::cerr << "Error: could not open .git/index" << endl;
         return;
     }
 
     // Print the filepath for debugging
-    std::cout << "Opening file: " << filepath << std::endl;
+    std::cout << "Opening file: " << filepath << endl;
 
     // Retrieve the file name
     std::string filename = std::filesystem::path(filepath).filename().string();
-    std::cerr<<filename<<std::endl;
+    std::cerr<<filename<<endl;
     // Calculate the SHA-1 hash of the file content
     std::string content = read_file_contents(filepath); // Implement this function to read the file content
     std::string hash = sha1_hex(content);
@@ -82,7 +82,7 @@ std::string read_file_contents(const std::string &filepath)
     std::ifstream file(filepath, std::ios::binary);
     if (!file.is_open())
     {
-        std::cerr << "Error: could not open file " << filepath << std::endl;
+        std::cerr << "Error: could not open file " << filepath << endl;
         return "";
     }
 
@@ -91,6 +91,5 @@ std::string read_file_contents(const std::string &filepath)
     std::string content = buffer.str();
 
     file.close(); // Explicitly close the file
-
     return content;
 }

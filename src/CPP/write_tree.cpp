@@ -5,7 +5,7 @@
 // A tree object will contain the state of working directory in the form of other tree and blob objects
 string write_tree(const std::string &directory)
 {
-    // std::cout << "Writing tree for directory: " << directory << std::endl;
+    // std::cout << "Writing tree for directory: " << directory << endl;
     std::vector<std::string> tree_entries;
     std::vector<std::string> skip;
     skip.push_back(".git");
@@ -15,9 +15,7 @@ string write_tree(const std::string &directory)
     //     ".git", "server", "CMakeCache.txt",
     //     "CMakeFiles", "Makefile", "cmake_install.cmake"};
     // read the .gitignore file and store the entries in the skip vector
-    fs::path start_dir = fs::current_path();
-    string git_path = locateGitFolderRelative(start_dir);
-    cout << YELLOW << __LINE__ << " write_tree.cpp " << " " << git_path << RESET << endl;
+    // cout << YELLOW << __LINE__ << " write_tree.cpp " << " " << git_path << RESET << endl;
     std::ifstream gitignore(git_path + "/.gitignore");
     if (gitignore.is_open())
     {
@@ -31,16 +29,16 @@ string write_tree(const std::string &directory)
     for (const auto &entry : std::filesystem::directory_iterator(directory))
     {
         std::string path = entry.path().string();
-        cout << BLUE << __LINE__ << " write_tree.cpp " << path << RESET << endl;
+        // cout<<BLUE<<__LINE__<<" write_tree.cpp "<<path<<RESET<<endl;
         if (std::any_of(skip.begin(), skip.end(), [&path](const std::string &s)
                         { return path.find(s) != std::string::npos; }))
         {
             continue;
         }
         // find the path to this file or dicretory relative to the directory where the git repository is located
-        fs::path gitDir = locateGitFolder(start_dir);
+        fs::path gitDir = locateGitFolder(curr_dir);
         string git_path = gitDir.string();
-        cout << GREEN << __LINE__ << " write_tree.cpp " << git_path << RESET << endl;
+        // cout << GREEN << __LINE__ << " write_tree.cpp " << git_path << RESET << endl;
         // ignore hidden files
         if (std::regex_match(entry.path().filename().string(), hidden_file_regex))
         {
@@ -70,13 +68,13 @@ string write_tree(const std::string &directory)
         std::string relative_path = path.substr(path.find(directory) + directory.length() + 1);
         std::string hash = std::filesystem::is_directory(path, ec) ? write_tree(path.c_str()) : hash_object(path.c_str());
         std::string object_type;
-        if (entry_type == "040000 ")
-            object_type = "tree";
-        else
-            object_type = "blob";
-        std::cerr << entry_type + ' ' << object_type << ' ' + hash + '\t' + relative_path << std::endl;
+        // if (entry_type == "040000 ")
+        //     object_type = "tree";
+        // else
+        //     object_type = "blob";
+        // std::cerr << entry_type + ' ' << object_type << ' ' + hash + '\t' + relative_path << endl;
 
-        tree_entries.emplace_back(path + '\0' + entry_type + relative_path + '\0' + hash);
+        // tree_entries.emplace_back(path + '\0' + entry_type + relative_path + '\0' + hash);
     }
     // sort the entries based on the absolute path O(nlogn)
     std::sort(tree_entries.begin(), tree_entries.end());
@@ -100,12 +98,12 @@ string write_tree(const std::string &directory)
     {
         tree_content += entry;
     }
-    // std::cerr << tree_content << std::endl;
+    // std::cerr << tree_content << endl;
     // storing the tree object
     std::string tree_hash = compute_sha1(tree_content, false);
-    cout << YELLOW << __LINE__ << " write_tree.cpp " << " " << tree_hash << RESET << endl;
-    compress_and_store(tree_hash.c_str(), tree_content, git_path);
-    // std::cout << "Tree hash for :" << directory << tree_hash << std::endl;
+    // cout << YELLOW << __LINE__ << " write_tree.cpp " << " " << tree_hash << RESET << endl;
+    compress_and_store(tree_hash.c_str(), tree_content);
+    // std::cout << "Tree hash for :" << directory << tree_hash << endl;
     return tree_hash;
 }
 
