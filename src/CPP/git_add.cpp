@@ -53,7 +53,8 @@ void add_index_entry(std::ofstream &index_file, const std::string &mode, const s
 void git_add(const std::string &filepath)
 {
     // Open the index file in append mode
-    std::ofstream index_file(".git/index", std::ios::binary | std::ios::app);
+    std::string index_path = git_path + "/index";
+    std::ofstream index_file("index_path", std::ios::binary | std::ios::app);
     if (!index_file)
     {
         std::cerr << "Error: could not open .git/index" << endl;
@@ -63,15 +64,18 @@ void git_add(const std::string &filepath)
     // Print the filepath for debugging
     std::cout << "Opening file: " << filepath << endl;
 
-    // Retrieve the file name
-    std::string filename = std::filesystem::path(filepath).filename().string();
-    std::cerr<<filename<<endl;
-    // Calculate the SHA-1 hash of the file content
-    std::string content = read_file_contents(filepath); // Implement this function to read the file content
-    std::string hash = sha1_hex(content);
+    string tree_hash = write_tree(filepath);
+    index_file<<tree_hash<<endl;
 
-    // Add the entry to the index
-    add_index_entry(index_file, "100644", hash, filename);
+    // // Retrieve the file name
+    // std::string filename = std::filesystem::path(filepath).filename().string();
+    // std::cerr<<filename<<endl;
+    // // Calculate the SHA-1 hash of the file content
+    // std::string content = read_file_contents(filepath);
+    // std::string hash = sha1_hex(content);
+
+    // // Add the entry to the index
+    // add_index_entry(index_file, "100644", hash, filename);
 
     // Close the index file
     index_file.close();

@@ -25,12 +25,12 @@ cd test_repo
 echo "This is an update to file1" >> file1.txt
 git_2.0 write-tree .
 
-# git_2.0 commit-tree $(git_2.0 write-tree .) -m "Updated file1"
+git_2.0 commit-tree $(git_2.0 write-tree .) -m "Updated file1"
 
 
 # Modify another file and make a third commit
-# echo "This is an update to file2" >> file2.txt
-# git_2.0 commit-tree $(git_2.0 write-tree .) -m "Updated file2"
+echo "This is an update to file2" >> file2.txt
+git_2.0 commit-tree $(git_2.0 write-tree .) -m "Updated file2"
 
 # Now you have a repository with multiple commits to test the checkout functionality
 echo "Repository setup complete. You can now test other commands."
