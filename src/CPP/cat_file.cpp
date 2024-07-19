@@ -22,9 +22,10 @@ int git_cat_file(int argc, char *argv[])
     const std::string dir_name = value.substr(0, 2);
     // the rest of the sha1 hash value is the actual file name inside the folder
     const std::string blob_sha = value.substr(2);
-    const auto blob_path = std::filesystem::path(git_path) / "objects" / dir_name / blob_sha;
-    // cout << MAGENTA << __LINE__ << " cat-file.cpp " << git_path << RESET << endl;
-    // cout << MAGENTA << __LINE__ << " cat-file.cpp " << blob_path << RESET << endl;
+    string subdir = "objects";
+    const fs::path blob_path = git_dir / subdir / dir_name / blob_sha;
+    cout << MAGENTA << __LINE__ << " cat-file.cpp " << git_path << RESET << endl;
+    cout << MAGENTA << __LINE__ << " cat-file.cpp " << blob_path << RESET << endl;
 
     std::ifstream input = std::ifstream(blob_path);
     if (!input.is_open())
@@ -35,7 +36,8 @@ int git_cat_file(int argc, char *argv[])
     const std::string blob_data = std::string(std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>());
     // std::cout << blob_data;
     // i have the compressed data of the file which needs to be decompressed using zlib
-    auto buf = std::string();
+    string buf = string();
+    cout<<RED<<buf<<RESET<<endl;
     buf.resize(blob_data.size());
     while (true)
     {

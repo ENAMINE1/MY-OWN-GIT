@@ -158,6 +158,15 @@ int main(int argc, char *argv[])
         }
         git_checkout(argc, argv);
     }
+    else if(command == "add")
+    {
+        if(argc < 3)
+        {
+            std::cerr << "No file or folder provided\n";
+            return EXIT_FAILURE;
+        }
+        git_add(argv[2]);
+    }
     else
     {
         std::cerr << "Unknown command " << command << '\n';

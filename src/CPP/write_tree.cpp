@@ -36,8 +36,6 @@ string write_tree(const std::string &directory)
             continue;
         }
         // find the path to this file or dicretory relative to the directory where the git repository is located
-        fs::path gitDir = locateGitFolder(curr_dir);
-        string git_path = gitDir.string();
         // cout << GREEN << __LINE__ << " write_tree.cpp " << git_path << RESET << endl;
         // ignore hidden files
         if (std::regex_match(entry.path().filename().string(), hidden_file_regex))
@@ -58,14 +56,14 @@ string write_tree(const std::string &directory)
         }
         std::string relative_path = path.substr(path.find(directory) + directory.length() + 1);
         std::string hash = std::filesystem::is_directory(path, ec) ? write_tree(path.c_str()) : hash_object(path.c_str());
-        std::string object_type;
+        // std::string object_type;
         // if (entry_type == "040000 ")
         //     object_type = "tree";
         // else
         //     object_type = "blob";
         // std::cerr << entry_type + ' ' << object_type << ' ' + hash + '\t' + relative_path << endl;
 
-        // tree_entries.emplace_back(path + '\0' + entry_type + relative_path + '\0' + hash);
+        tree_entries.emplace_back(path + '\0' + entry_type + relative_path + '\0' + hash);
     }
     // sort the entries based on the absolute path O(nlogn)
     std::sort(tree_entries.begin(), tree_entries.end());

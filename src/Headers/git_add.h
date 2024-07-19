@@ -4,6 +4,7 @@
 // https://git-scm.com/docs/index-format
 
 #include"utils.h"
+#include"write_tree.h"
 
 void git_add(const std::string &file);
 

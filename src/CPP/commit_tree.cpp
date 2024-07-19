@@ -110,19 +110,20 @@ std::string getHomeDirectory()
 
 std::string show_commit(const std::string &commit_hash)
 {
-    char object_path[64];
-    snprintf(object_path, sizeof(object_path), git_path.c_str(), "/objects/%.2s/%s", commit_hash.c_str(), commit_hash.c_str() + 2);
-    FILE *object_file = fopen(object_path, "rb");
+    std::string object_path = git_path + "/objects/" + commit_hash.substr(0, 2) + "/" + commit_hash.substr(2);
+    FILE *object_file = fopen(object_path.c_str(), "rb");
     if (object_file == nullptr)
     {
         std::cerr << "Invalid object hash: " << commit_hash << "\n";
         exit(EXIT_FAILURE);
     }
 
+    std::cout << RED << __LINE__ << " commit_tree.cpp " << object_path << " " << commit_hash << RESET << endl;
     FILE *output_file = tmpfile();
     if (output_file == nullptr)
     {
         std::cerr << "Failed to create output file.\n";
+        fclose(object_file); // Close the object_file before exiting
         exit(EXIT_FAILURE);
     }
 
@@ -130,6 +131,8 @@ std::string show_commit(const std::string &commit_hash)
     if (decompress(object_file, output_file) != EXIT_SUCCESS)
     {
         std::cerr << "Failed to decompress object file.\n";
+        fclose(object_file); // Close the object_file before exiting
+        fclose(output_file); // Close the output_file before exiting
         exit(EXIT_FAILURE);
     }
 
@@ -141,9 +144,20 @@ std::string show_commit(const std::string &commit_hash)
     char buffer[4096]; // Buffer for reading lines
     while (fgets(buffer, sizeof(buffer), output_file) != nullptr)
     {
-        // the first line will be of the form commit <length>'\0'tree <tree_hash> so we replace the '\0' with '\n'
-
-        commit_content += buffer;
+        std::string temp = buffer;
+        if (temp.substr(0, 6) == "commit")
+        {
+            cout << GREEN << temp << RESET << endl;
+            int idx = temp.find("tree");
+            if (idx != string::npos)
+            {
+                commit_content += temp.substr(0, idx);
+                commit_content += "\n";
+                commit_content += temp.substr(idx);
+            }
+        }
+        else
+            commit_content += temp;
     }
 
     // Close the files

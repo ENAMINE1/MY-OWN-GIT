@@ -7,14 +7,14 @@ std::string hash_object(const std::string &filepath)
     std::ifstream t(filepath, std::ios::binary);
     if (!t.is_open())
     {
-        std::cerr << RED << "Could not open file " << filepath << RESET << endl;
+        // std::cerr << RED << "Could not open file " << filepath << RESET << endl;
         return "";
     }
     std::stringstream data;
     data << t.rdbuf();
     if (data.str().empty())
     {
-        std::cerr << RED << "fatal: Unable to hash, File is empty: " << filepath << RESET << endl;
+        // std::cerr << RED << "fatal: Unable to hash, File is empty: " << filepath << RESET << endl;
         return "";
     }
     // if the filepath points to a directory
