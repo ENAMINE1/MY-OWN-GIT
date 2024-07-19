@@ -1,13 +1,3 @@
-#include <sstream>
-#include <iomanip>
-#include <openssl/sha.h>
-#include <zlib.h>
-#include <iostream>
-#include <algorithm>
-#include <vector>
-#include <set>
-#include <fstream>
-#include <filesystem>
 #include "utils.h"
 
 std::string sha1_hex(const std::string &filepath)
@@ -286,6 +276,7 @@ bool compress_object(std::string &buf, std::string data)
 
 void compress_and_store(const std::string &hash, const std::string &content, std::string dir = ".")
 {
+    cout << "I am inside compress and store" << endl;
     // Open input stream to read from memory (fmemopen is POSIX, not standard C++)
     FILE *input = fmemopen((void *)content.c_str(), content.length(), "rb");
     if (!input)
@@ -295,13 +286,16 @@ void compress_and_store(const std::string &hash, const std::string &content, std
     }
 
     std::string hash_folder = hash.substr(0, 2);
-    std::string object_path = dir + "/.git/objects/" + hash_folder + '/';
+    std::string object_path = dir + "/objects/" + hash_folder + '/';
+    cout<<RED<<__LINE__<<"compress_and_store"<<object_path<<RESET<<endl;
     if (!std::filesystem::exists(object_path))
     {
         std::filesystem::create_directories(object_path);
     }
 
     std::string object_file_path = object_path + hash.substr(2);
+    cout << RED << __LINE__ << "compress_and_store" << object_file_path << RESET << endl;
+
     if (!std::filesystem::exists(object_file_path))
     {
         FILE *output = fopen(object_file_path.c_str(), "wb");
@@ -346,4 +340,43 @@ void compress_and_store(const std::string &hash, const std::string &content, std
     }
 
     fclose(input);
+}
+
+fs::path locateGitFolderRelative(const fs::path &startDir)
+{
+    fs::path currentDir = startDir;
+
+    while (!currentDir.empty() && currentDir.has_parent_path())
+    {
+        fs::path gitPath = currentDir / ".git";
+
+        if (fs::exists(gitPath) && fs::is_directory(gitPath))
+        {
+            // Compute the relative path from the startDir to the found .git directory
+            return fs::relative(gitPath, startDir);
+        }
+
+        currentDir = currentDir.parent_path();
+    }
+
+    return fs::path(); // Return an empty path if .git folder is not found
+}
+
+fs::path locateGitFolder(const fs::path &startDir)
+{
+    fs::path currentDir = startDir;
+
+    while (!currentDir.empty() && currentDir.has_parent_path())
+    {
+        fs::path gitPath = currentDir / ".git";
+
+        if (fs::exists(gitPath) && fs::is_directory(gitPath))
+        {
+            return gitPath;
+        }
+
+        currentDir = currentDir.parent_path();
+    }
+
+    return fs::path(); // Return an empty path if .git folder is not found
 }

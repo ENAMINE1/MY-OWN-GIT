@@ -1,5 +1,12 @@
 # bashrc_welcome.txt
 
+# Set LS_COLORS environment variable
+export LS_COLORS="di=34:ln=36:so=35:pi=33:ex=32:bd=46;30:cd=43;30:su=37;41:sg=30;43:tw=30;42:ow=34;42"
+
+# Source the bash completion script
+source /etc/bash_completion.d/git_clone_completion.sh
+
+
 # Function to display a welcome message and list of commands
 function my_own_git_welcome() {
     echo -e "\n\033[1;32mWelcome to the MY-OWN-GIT Project! 🚀\033[0m"
