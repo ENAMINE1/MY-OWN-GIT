@@ -3,11 +3,11 @@
 std::string sha1_hex(const std::string &filepath)
 {
     // Read the file content
-    std::cerr << "Reading file " << filepath << std::endl;
+    std::cerr << "Reading file " << filepath << endl;
     std::ifstream file(filepath, std::ios::binary);
     if (!file)
     {
-        std::cerr << "Error: Could not open file " << filepath << std::endl;
+        std::cerr << "Error: Could not open file " << filepath << endl;
         return "";
     }
 
@@ -51,7 +51,7 @@ std::string sha_file(std::string data)
     {
         ss << std::setw(2) << static_cast<int>(byte);
     }
-    // std::cout << ss.str() << std::endl;
+    // std::cout << ss.str() << endl;
     return ss.str();
 }
 // this function is used to convert the hexadecimal hash to a binary hash which means that the hash is converted to a string of bytes
@@ -153,7 +153,7 @@ std::set<Entry> read_entries(FILE *file)
     {
         if (space != ' ')
         {
-            std::cerr << "Error: Expected space after mode!" << std::endl;
+            std::cerr << "Error: Expected space after mode!" << endl;
             break;
         }
 
@@ -173,7 +173,7 @@ std::set<Entry> read_entries(FILE *file)
 
         if (ch != '\0')
         {
-            std::cerr << "Error: Null terminator not found after filename!" << std::endl;
+            std::cerr << "Error: Null terminator not found after filename!" << endl;
             break;
         }
 
@@ -181,7 +181,7 @@ std::set<Entry> read_entries(FILE *file)
         char hash[41];
         if (fread(hash, 1, 40, file) != 40)
         {
-            std::cerr << "Error: Could not read 20-byte SHA-1 hash!" << std::endl;
+            std::cerr << "Error: Could not read 20-byte SHA-1 hash!" << endl;
             break;
         }
         hash[40] = '\0'; // Null terminate the buffer to make it a C-string
@@ -210,14 +210,14 @@ std::set<Entry> parse_tree_object(FILE *tree_object)
             break;
         }
     }
-    if(!foundNull)
+    if (!foundNull)
     {
-        std::cerr<<"Fatal: Invalid tree object format."<<std::endl;
+        std::cerr << "Fatal: Invalid tree object format." << endl;
         return {};
     }
-    else if(object_type.substr(0,4) != "tree")
+    else if (object_type.substr(0, 4) != "tree")
     {
-        std::cerr<<"Fatal: Invalid object type."<<std::endl;
+        std::cerr << "Fatal: Invalid object type." << endl;
         return {};
     }
     std::set<Entry> sorted_directories = read_entries(tree_object);
@@ -274,9 +274,9 @@ bool compress_object(std::string &buf, std::string data)
     return true;
 }
 
-void compress_and_store(const std::string &hash, const std::string &content, std::string dir = ".")
+void compress_and_store(const std::string &hash, const std::string &content)
 {
-    cout << "I am inside compress and store" << endl;
+    // cout << "I am inside compress and store" << endl;
     // Open input stream to read from memory (fmemopen is POSIX, not standard C++)
     FILE *input = fmemopen((void *)content.c_str(), content.length(), "rb");
     if (!input)
@@ -284,17 +284,20 @@ void compress_and_store(const std::string &hash, const std::string &content, std
         std::cerr << "Failed to open memory stream for reading.\n";
         return;
     }
-
+    fs::path start_dir = fs::current_path();
+    fs::path git_dir = locateGitFolderRelative(start_dir);
+    string git_dir_str = git_dir.string();
+    // cout << RED << __LINE__ << "compress_and_store" << git_dir_str << RESET << endl;
     std::string hash_folder = hash.substr(0, 2);
-    std::string object_path = dir + "/objects/" + hash_folder + '/';
-    cout<<RED<<__LINE__<<"compress_and_store"<<object_path<<RESET<<endl;
+    std::string object_path = git_dir_str + "/objects/" + hash_folder + '/';
+    // cout << RED << __LINE__ << "compress_and_store" << object_path << RESET << endl;
     if (!std::filesystem::exists(object_path))
     {
         std::filesystem::create_directories(object_path);
     }
 
     std::string object_file_path = object_path + hash.substr(2);
-    cout << RED << __LINE__ << "compress_and_store" << object_file_path << RESET << endl;
+    // cout << RED << __LINE__ << "compress_and_store" << object_file_path << RESET << endl;
 
     if (!std::filesystem::exists(object_file_path))
     {
@@ -324,7 +327,7 @@ void compress_and_store(const std::string &hash, const std::string &content, std
             // {cout
             //     std::cerr << content[i];
             // }
-            // std::cerr << std::endl;
+            // std::cerr << endl;
             fclose(output);
             delete[] input_buffer;
             fclose(input); // close input file stream before returning

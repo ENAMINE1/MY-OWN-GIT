@@ -45,13 +45,18 @@ struct Entry
 };
 
 #define CHUNK 16384
+#define endl '\n'
+
+extern fs::path curr_dir;
+extern fs::path git_dir;
+extern string git_path;
 
 std::string sha1_hex(const std::string &input);
 std::string compute_sha1(const std::string &data, bool print_out);
 std::string sha_file(std::string basicString);
 std::string hash_digest(const std::string &input);
 void compressFile(const std::string &data, uLong *bound, unsigned char *dest);
-void compress_and_store(const std::string &hash, const std::string &content, std::string dir);
+void compress_and_store(const std::string &hash, const std::string &content);
 bool decompress_object(std::string &buf, const std::string &data);
 bool compress_object(std::string &buf, const std::string &data);
 int decompress(FILE *source, FILE *dest);

@@ -14,9 +14,9 @@ int ls_tree(const char *object_hash)
     // retrieve the object path
     char object_path[64];
     // getting the object path form the object hash
-    // std::cout<<"Object hash: "<<object_hash<<std::endl;
-    snprintf(object_path, sizeof(object_path), ".git/objects/%.2s/%s", object_hash, object_hash + 2);
-    // std::cout<<"Object path: "<<object_path<<std::endl;
+    // std::cout<<"Object hash: "<<object_hash<<endl;
+    snprintf(object_path, sizeof(object_path), "%s/objects/%.2s/%s", git_path.c_str(), object_hash, object_hash + 2);
+    // std::cout<<"Object path: "<<object_path<<endl;
     // set the input and output file descriptors
     FILE *object_file = fopen(object_path, "rb");
     if (object_file == NULL)
@@ -40,7 +40,7 @@ int ls_tree(const char *object_hash)
     // print the directories
     if (!directories.empty())
     {
-        // std::cout << "Directories: " << std::endl;
+        // std::cout << "Directories: " << endl;
         for (const Entry &directory : directories)
         {
             std::string object_type;
@@ -48,7 +48,7 @@ int ls_tree(const char *object_hash)
                 object_type = "tree";
             else
                 object_type = "blob";
-            std::cout << directory.mode << " " << object_type << " " << directory.sha1_hash << '\t' << directory.filename << std::endl;
+            std::cout << directory.mode << " " << object_type << " " << directory.sha1_hash << '\t' << directory.filename << endl;
         }
     }
     return EXIT_SUCCESS;
