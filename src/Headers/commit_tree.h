@@ -10,8 +10,8 @@ committer Scott Chacon <schacon@gmail.com> 1243040974 -0700
 
 First commit
 */
-
-#include <string>
+#include "hash_object.h"
+#include "utils.h"
 std::string commit_tree(const std::string &tree_hash, const std::string &message);
 std::string commit_tree(const std::string &tree_hash, const std::string &message, const std::string &parent_commit_hash);
 std::string get_author();

@@ -1,12 +1,4 @@
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <cstring>
-#include <sstream>
-#include <set>
-#include <zlib.h>
 #include "ls_tree.h"
-#include "utils.h"
 
 // format of file object
 /*

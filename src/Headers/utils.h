@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <string>
+#include <cstring>
 #include <set>
 #include <cstdio>
 #include <zlib.h>

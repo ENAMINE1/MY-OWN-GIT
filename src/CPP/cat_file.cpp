@@ -1,12 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <zlib.h>
-#include <filesystem> // Add this line
 #include "cat_file.h"
-#include "utils.h"
-#include "ls_tree.h"
-#include "commit_tree.h"
 
 int git_cat_file(int argc, char *argv[])
 {

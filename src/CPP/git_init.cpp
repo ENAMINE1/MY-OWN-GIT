@@ -1,6 +1,3 @@
-#include <iostream>
-#include <filesystem>
-#include <fstream>
 #include "git_init.h"
 
 int git_init()

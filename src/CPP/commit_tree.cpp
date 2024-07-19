@@ -1,16 +1,4 @@
-#include <sstream>
-#include <zlib.h>
-#include <openssl/sha.h>
-#include <fstream>
-#include <string>
-#include <iomanip>
-#include <iostream>
-#include <cstdlib>
-#include <filesystem>
-#include <cstring>
 #include "commit_tree.h"
-#include "hash_object.h"
-#include "utils.h"
 
 std::string get_author()
 {
@@ -154,7 +142,7 @@ std::string show_commit(const std::string &commit_hash)
     while (fgets(buffer, sizeof(buffer), output_file) != nullptr)
     {
         // the first line will be of the form commit <length>'\0'tree <tree_hash> so we replace the '\0' with '\n'
-        
+
         commit_content += buffer;
     }
 

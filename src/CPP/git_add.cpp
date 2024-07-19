@@ -1,15 +1,4 @@
 #include "git_add.h"
-#include "utils.h"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <cstring>
-#include <algorithm>
-#include <openssl/sha.h>
-#include <zlib.h>
-#include <filesystem>
 
 std::string read_file_contents(const std::string &filepath);
 
