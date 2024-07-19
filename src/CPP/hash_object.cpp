@@ -14,14 +14,14 @@ std::string hash_object(const std::string &filepath)
     std::ifstream t(filepath, std::ios::binary);
     if (!t.is_open())
     {
-        std::cerr << "Could not open file " << filepath << std::endl;
+        std::cerr << RED << "Could not open file " << filepath << RESET << std::endl;
         return "";
     }
     std::stringstream data;
     data << t.rdbuf();
     if (data.str().empty())
     {
-        std::cerr << "fatal: Unable to hash, File is empty: " << filepath << std::endl;
+        std::cerr << RED << "fatal: Unable to hash, File is empty: " << filepath << RESET << std::endl;
         return "";
     }
     // if the filepath points to a directory
@@ -47,7 +47,9 @@ std::string hash_object(const std::string &filepath)
     compressFile(content, &bound, compressedData);
 
     // Write compressed data to .git/objects
-    std::string dir = ".git/objects/" + buffer.substr(0, 2);
+    fs::path gitDir = locateGitFolderRelative(fs::current_path());
+    string git_path = gitDir.string();
+    std::string dir = git_path + "/objects/" + buffer.substr(0, 2);
     if (!std::filesystem::exists(dir))
         std::filesystem::create_directory(dir);
     std::string objectPath = dir + "/" + buffer.substr(2);

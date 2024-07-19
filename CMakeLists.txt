@@ -18,6 +18,7 @@ set(SOURCES
     src/CPP/utils.cpp
     src/CPP/git_add.cpp
     src/CPP/commit_tree.cpp
+    src/CPP/git_checkout.cpp
 )
 
 # Add header files
@@ -30,6 +31,7 @@ set(HEADERS
     src/Headers/utils.h
     src/Headers/git_add.h
     src/Headers/commit_tree.h
+    src/Headers/git_checkout.h
 )
 
 # Include directories

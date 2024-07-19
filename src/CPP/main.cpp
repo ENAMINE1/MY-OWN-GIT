@@ -8,11 +8,14 @@
 #include "write_tree.h"
 #include "git_add.h"
 #include "commit_tree.h"
+#include "git_checkout.h"
 
 // argv[0] = "./git_c" arg[1] = command arg[2] = flags (optional) arg[3] = file
 
 int main(int argc, char *argv[])
 {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr); 
     // Flush after every std::cout / std::cerr
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
@@ -128,6 +131,15 @@ int main(int argc, char *argv[])
         std::string commit_hash = commit_tree(argv[2], argv[4]);
         std::cout << commit_hash << '\n';
         return EXIT_SUCCESS;
+    }
+    else if (command == "checkout")
+    {
+        if (argc < 3)
+        {
+            std::cerr << "Fatal Error: Usage git_2.0 checkout <commit-hash>\n";
+            return EXIT_FAILURE;
+        }
+        git_checkout(argc, argv);
     }
     else
     {

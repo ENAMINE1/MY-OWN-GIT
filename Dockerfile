@@ -27,13 +27,15 @@ RUN mkdir -p /app/src/CPP /app/src/Headers \
 COPY ./src/CPP /app/src/CPP
 COPY ./src/Headers /app/src/Headers
 COPY ./CMakeLists.txt /app/CMakeLists.txt
+COPY ./init.sh /home/user/init.sh
 
 # Build the project
 RUN cd /app \
     && cmake . \
     && make \
     && cp /app/git_c /usr/local/bin/git_2.0 \
-    && chmod +x /usr/local/bin/git_2.0
+    && chmod +x /usr/local/bin/git_2.0 \
+    && chmod +x /home/user/init.sh
 
 # Copy the Welcome.txt file to the user's home directory as .bashrc
 COPY ./Welcome.txt /home/user/.bashrc
