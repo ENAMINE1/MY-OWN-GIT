@@ -48,6 +48,7 @@ int ls_tree(const char *object_hash)
                 object_type = "tree";
             else
                 object_type = "blob";
+            std::cout << GREEN << directory.filename << RESET << endl;
             std::cout << GREEN << directory.mode << " " << object_type << " " << directory.sha1_hash << '\t' << fs::path(directory.filename).filename().c_str() << RESET << endl;
         }
     }
