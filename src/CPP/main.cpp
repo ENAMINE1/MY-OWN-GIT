@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
             std::cout << "Usage: write-tree <file_path>" << endl;
         else if (argc > 3)
             std::cout << "Too many parmeters to write-tree.\n Usage: write-tree <file_path>" << endl;
-        std::string tree_hash = write_tree(".");
+        std::string tree_hash = write_tree(locateParentFolder(curr_dir).c_str());
         if (tree_hash.empty())
         {
             return EXIT_FAILURE;

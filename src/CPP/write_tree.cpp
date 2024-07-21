@@ -29,7 +29,7 @@ string write_tree(const std::string &directory)
     for (const auto &entry : std::filesystem::directory_iterator(directory))
     {
         std::string path = entry.path().string();
-        // cout<<BLUE<<__LINE__<<" write_tree.cpp "<<path<<RESET<<endl;
+        // cout << BLUE << __LINE__ << " write_tree.cpp " << path << RESET << endl;
         if (std::any_of(skip.begin(), skip.end(), [&path](const std::string &s)
                         { return path.find(s) != std::string::npos; }))
         {
@@ -55,15 +55,18 @@ string write_tree(const std::string &directory)
             entry_type = check_file_perms(perms);
         }
         std::string relative_path = path.substr(path.find(directory) + directory.length() + 1);
+        std::string absolute_path = locateGitFolder(fs::current_path()).c_str();
+        std::string relative_path_wrt_git = fs::relative(absolute_path, fs::current_path()).c_str();
+        // cout << MAGENTA << __LINE__ << "write_tree.cpp" << fs::current_path().c_str() << RESET << endl;
         std::string hash = std::filesystem::is_directory(path, ec) ? write_tree(path.c_str()) : hash_object(path.c_str());
         // std::string object_type;
         // if (entry_type == "040000 ")
         //     object_type = "tree";
         // else
         //     object_type = "blob";
-        // std::cerr << entry_type + ' ' << object_type << ' ' + hash + '\t' + relative_path << endl;
+        // std::cout << GREEN << entry_type + ' ' << object_type << ' ' + hash + '\t' + path << RESET << endl;
 
-        tree_entries.emplace_back(path + '\0' + entry_type + relative_path + '\0' + hash);
+        tree_entries.emplace_back(path + '\0' + entry_type + path + '\0' + hash);
     }
     // sort the entries based on the absolute path O(nlogn)
     std::sort(tree_entries.begin(), tree_entries.end());

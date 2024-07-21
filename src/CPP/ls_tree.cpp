@@ -3,7 +3,7 @@
 // format of file object
 /*
     example of entry of a tree object
-    "tree"+bytes+'\0'+entry1+'\0'+entry2+'\0'+entry3
+    "tree"+bytes+'\0'+entry1+'\0'+entry2+'\0'+entry3 ....
     where each entry is of the form
     100644 file.txt\0<20-byte SHA-1 hash for file.txt> "OR"
     040000 dir\0<20-byte SHA-1 hash for the tree object "dir">
@@ -48,7 +48,7 @@ int ls_tree(const char *object_hash)
                 object_type = "tree";
             else
                 object_type = "blob";
-            std::cout << directory.mode << " " << object_type << " " << directory.sha1_hash << '\t' << directory.filename << endl;
+            std::cout << GREEN << directory.mode << " " << object_type << " " << directory.sha1_hash << '\t' << fs::path(directory.filename).filename().c_str() << RESET << endl;
         }
     }
     return EXIT_SUCCESS;
