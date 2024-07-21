@@ -383,3 +383,22 @@ fs::path locateGitFolder(const fs::path &startDir)
 
     return fs::path(); // Return an empty path if .git folder is not found
 }
+
+fs::path locateParentFolderRelative(const fs::path &startDir)
+{
+    fs::path currentDir = startDir;
+
+    while (!currentDir.empty() && currentDir.has_parent_path())
+    {
+        fs::path gitPath = currentDir / ".git";
+
+        if (fs::exists(gitPath) && fs::is_directory(gitPath))
+        {
+            // Compute the relative path from the startDir to the found .git directory
+            return fs::relative(curr_dir, startDir);
+        }
+
+        currentDir = currentDir.parent_path();
+    }
+    return fs::path(); // Return an empty path if .git folder is not found
+}

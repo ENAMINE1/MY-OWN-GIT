@@ -63,4 +63,5 @@ int decompress(FILE *source, FILE *dest);
 std::set<Entry> parse_tree_object(FILE *file);
 fs::path locateGitFolderRelative(const fs::path &startDir);
 fs::path locateGitFolder(const fs::path &startDir);
+fs::path locateParentFolderRelative(const fs::path &startDir);
 #endif

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "utils.h"
+#include "write_tree.h"
 
 int git_checkout(int argc, char *argv[]);
 void update_working_directory(string &tree_hash);

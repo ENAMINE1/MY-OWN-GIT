@@ -32,24 +32,31 @@ int git_checkout(int argc, char *argv[])
         // using this tree object to make changes to the files in the working directory
 
         rewind(output_file);
-
+        fs::path root_dir = locateParentFolderRelative(curr_dir);
+        string homedir = root_dir.string();
+        string current_tree_hash = write_tree(homedir);
+        string prev_tree_hash;
         // Read the commit object from output_file
         std::string commit_content;
         char buffer[4096]; // Buffer for reading lines
         while (fgets(buffer, sizeof(buffer), output_file) != nullptr)
         {
             // the first line will be of the form commit <length>'\0'tree <tree_hash> so we replace the '\0' with '\n'
+            std::string temp = buffer;
+            int idx = temp.find("tree");
+            if(idx != string::npos)
+            {
+                prev_tree_hash = temp.substr(idx + 5, 40);
+                break;
+            }
+            else
             commit_content += buffer;
         }
+        cout <<GREEN<< "current tree hash: " << current_tree_hash << RESET << endl;
+        cout <<GREEN<< "prev tree hash: " << prev_tree_hash << RESET << endl;
 
         fclose(object_file);
         fclose(output_file);
-
-        // extract the tree hash form the commit object
-        cout<<commit_content<<endl;
-        std::string tree_hash = commit_content.substr(6, 40);
-        tree_hash = tree_hash.substr(tree_hash.length() - 31);
-        // cout << tree_hash << endl;
 
         // update_working_directory(tree_hash);
     }
