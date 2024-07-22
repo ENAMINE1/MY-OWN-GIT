@@ -8,4 +8,5 @@
 
 int git_checkout(int argc, char *argv[]);
 void update_working_directory(string &tree_hash);
+void process_tree_object(string &tree_hash);
 #endif
