@@ -100,6 +100,8 @@ int main(int argc, char *argv[])
     }
     else if (command == "commit-tree")
     {
+        // if no file with the name COMMIT_EDITMSG is present then wrong command because no earlier comimits
+        string file_path = git_path + "/COMMIT_EDITMSG";
         if (argc < 5)
         {
             std::cerr << "Fatal Error: Usage commit-tree <tree-hash> -m <commit-message>\n";
@@ -107,8 +109,6 @@ int main(int argc, char *argv[])
         }
         if (argc > 5)
         {
-            // if no file with the name COMMIT_EDITMSG is present then wrong command because no earlier comimits
-            string file_path = git_path + "/COMMIT_EDITMSG";
             // cout << MAGENTA << file_path << RESET << endl;
             std::ifstream file(file_path);
             if (!file)
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
             }
         }
         // create ./git/COMMIT_EDITMSG file and write the commit message to it
-        std::ofstream file("file_path");
+        std::ofstream file(file_path);
         if (!file)
         {
             std::cerr << "Fatal Error: Failed to create .git/COMMIT_EDITMSG file\n";

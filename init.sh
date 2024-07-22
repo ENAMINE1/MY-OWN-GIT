@@ -17,7 +17,7 @@ cd ..
 # create the tree object
 
 # Make a commit
-# git_2.0 commit-tree $(git_2.0 write-tree .) -m "Initial commit"
+git_2.0 commit-tree $(git_2.0 write-tree .) -m "Initial commit"
 # git_2.0 write-tree .
 
 # Modify one of the files and make another commit

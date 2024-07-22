@@ -65,4 +65,5 @@ fs::path locateGitFolderRelative(const fs::path &startDir);
 fs::path locateGitFolder(const fs::path &startDir);
 fs::path locateParentFolderRelative(const fs::path &startDir);
 fs::path locateParentFolder(const fs::path &startDir);
+bool isAncestor(const fs::path &path1, const fs::path &path2);
 #endif
