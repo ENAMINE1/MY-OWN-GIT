@@ -36,20 +36,39 @@ int ls_tree(const char *object_hash)
         std::cerr << "Failed to decompress object file.\n";
         return EXIT_FAILURE;
     }
+
     std::set<Entry> directories = parse_tree_object(output_file);
     // print the directories
+    bool flag = false;
     if (!directories.empty())
     {
         // std::cout << "Directories: " << endl;
         for (const Entry &directory : directories)
         {
-            std::string object_type;
+            cout << RED << __LINE__ << " ls_tree.cpp " << (fs::path(directory.filename)).c_str() << "-----" << curr_dir.c_str() << RESET << GREEN << "---->" << (*((fs::path(directory.filename)).c_str()) == *(curr_dir.c_str())) << RESET << endl;
             if (directory.mode == "040000")
-                object_type = "tree";
-            else
-                object_type = "blob";
-            std::cout << GREEN << directory.mode << " " << object_type << " " << directory.sha1_hash << '\t' << fs::path(directory.filename).filename().c_str() << RESET << endl;
+            {
+                if (isAncestor(fs::path(directory.filename), curr_dir))
+                {
+                    // std::cout << GREEN << directory.mode << " " << "tree" << " " << directory.sha1_hash << '\t' << fs::path(directory.filename).filename().c_str() << RESET << endl;
+                    if (!ls_tree(directory.sha1_hash.c_str()))
+                    {
+                        return EXIT_SUCCESS;
+                    }
+                }
+            }
+            if (*fs::path(directory.filename).c_str() == *curr_dir.c_str())
+            {
+                std::string object_type;
+                if (directory.mode == "040000")
+                    object_type = "tree";
+                else
+
+                    object_type = "blob";
+                std::cout << GREEN << directory.mode << " " << object_type << " " << directory.sha1_hash << '\t' << fs::path(directory.filename).filename().c_str() << RESET << endl;
+                flag = true;
+            }
         }
     }
-    return EXIT_SUCCESS;
+    return (flag) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

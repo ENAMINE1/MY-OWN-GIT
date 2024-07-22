@@ -421,3 +421,15 @@ fs::path locateParentFolder(const fs::path &startDir)
     }
     return fs::path(); // Return an empty path if .git folder is not found
 }
+// Function to check if path1 is an ancestor of path2
+bool isAncestor(const fs::path &path1, const fs::path &path2)
+{
+    // Normalize both paths
+    fs::path normPath1 = fs::canonical(path1);
+    fs::path normPath2 = fs::canonical(path2);
+
+    // Check if normPath1 is a prefix of normPath2
+    return normPath2.string().find(normPath1.string()) == 0 &&
+           (normPath2.string().size() == normPath1.string().size() ||
+            normPath2.string()[normPath1.string().size()] == fs::path::preferred_separator);
+}
