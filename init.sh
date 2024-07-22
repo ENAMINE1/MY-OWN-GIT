@@ -18,12 +18,12 @@ cd ..
 
 # Make a commit
 # git_2.0 commit-tree $(git_2.0 write-tree .) -m "Initial commit"
-git_2.0 write-tree .
+# git_2.0 write-tree .
 
 # Modify one of the files and make another commit
 cd test_repo
 echo "This is an update to file1" >> file1.txt
-git_2.0 write-tree .
+# git_2.0 write-tree .
 
 git_2.0 commit-tree $(git_2.0 write-tree .) -m "Updated file1"
 
